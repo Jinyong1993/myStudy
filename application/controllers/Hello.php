@@ -29,7 +29,7 @@ class Hello extends CI_Controller {
 	{
 		$year = $this->input->get("year") ?: date('Y');
 		$month = $this->input->get("month") ?: date('m');
-		
+		$d = 0;
 		$isError = false;
 		$arr = array();
 		
