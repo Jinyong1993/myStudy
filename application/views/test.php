@@ -11,14 +11,14 @@
     <button type="submit">search</button>
     <br>
     <?php if($month == 1) : ?>
-        <a href="https://localhost:10443/h28-042_comyu-navi/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12">previous month</a>
+        <a href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12">previous month</a>
     <?php else : ?>
-        <a href="https://localhost:10443/h28-042_comyu-navi/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month-1?>">previous month</a>
+        <a href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month-1?>">previous month</a>
     <?php endif ?>
     <?php if($month == 12) : ?>
-        <a href="https://localhost:10443/h28-042_comyu-navi/sample/index.php/Hello/calendar?<?php echo "year=".($year+1) ?>&month=1">next month</a>
+        <a href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year+1) ?>&month=1">next month</a>
     <?php else : ?>
-        <a href="https://localhost:10443/h28-042_comyu-navi/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">next month</a>
+        <a href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">next month</a>
     <?php endif ?>
 <?php if(!$isError) : ?>
 <table name="table">
@@ -41,13 +41,14 @@
         </td>
         <td>
             <?php 
-            $text = '';
-            foreach($query as $q){
-                if($q->day == $day){
-                    $text = $q->text;
-                }
+            if(isset($arr[$day]))
+            {
+                $text = $arr[$day];
             }
-                
+            else
+            {
+                $text = '';
+            }
             ?>
             <input value="<?=$text?>"/>
         </td>

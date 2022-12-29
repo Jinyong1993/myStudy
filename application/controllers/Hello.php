@@ -49,9 +49,10 @@ class Hello extends CI_Controller {
 		$query = $this->db->query("select * from calendar where year=$year and month=$month;");
 
 		foreach($query->result() as $row){
+			$arr[$row->day] = $row->text;
 			var_dump($row);
 		}
-
+		var_dump($arr);
 		$data = array(
 			'isError' => $isError,
 			'year' => $year,
@@ -59,6 +60,7 @@ class Hello extends CI_Controller {
 			'total_day' => $total_day,
 			'time' => $time,
 			'query' => $query->result(),
+			'arr' => $arr,
 		);
 		
 		$this->load->view("test", $data);
