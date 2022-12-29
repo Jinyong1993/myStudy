@@ -6,7 +6,7 @@
 </style>
 </head>
 <body>
-<form method="GET" action="https://localhost:10443/h28-042_comyu-navi/sample/index.php/Hello/calendar?<?php ?>">
+<form method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
     <input type="text" name="year" value="<?php echo $year ?>">/<input type="text" name="month" value="<?php echo $month ?>">
     <button type="submit">search</button>
     <br>
@@ -20,6 +20,10 @@
     <?php else : ?>
         <a href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">next month</a>
     <?php endif ?>
+</form>
+<form method="POST" action="https://localhost:10443/sample/index.php/Hello/insert">
+    <input type="hidden" name="year" value="<?php echo $year ?>"><input type="hidden" name="month" value="<?php echo $month ?>">
+    <button type="submit">save</button>
 <?php if(!$isError) : ?>
 <table name="table">
     <tr>
@@ -34,23 +38,23 @@
     <tr>
         <td>
             <?= date("Y/m/d", $time); ?>
-            <?php $day = date('d', $time) ?>
+            <?php $day = (int) date('d', $time) ?>
         </td>
         <td>
             <?= date('D', $time) ?>
         </td>
         <td>
             <?php 
-            if(isset($arr[$day]))
+            if(isset($select[$day]))
             {
-                $text = $arr[$day];
+                $text = $select[$day];
             }
             else
             {
                 $text = '';
             }
             ?>
-            <input value="<?=$text?>"/>
+            <input name="text_save[]" value="<?=$text?>"/>
         </td>
     </tr>
     <?php

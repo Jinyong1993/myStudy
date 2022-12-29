@@ -29,7 +29,7 @@ class Hello extends CI_Controller {
 	{
 		$year = $this->input->get("year") ?: date('Y');
 		$month = $this->input->get("month") ?: date('m');
-		$d = 0;
+		
 		$isError = false;
 		$arr = array();
 		
@@ -45,24 +45,77 @@ class Hello extends CI_Controller {
 		$start = date('w', $time);
 		$total_day = date('t', $time);
 
-		$this->load->database();
-		$query = $this->db->query("select * from calendar where year=$year and month=$month;");
+		$select = $this->select($year, $month);
 
-		foreach($query->result() as $row){
-			$arr[$row->day] = $row->text;
-			var_dump($row);
-		}
-		var_dump($arr);
 		$data = array(
 			'isError' => $isError,
 			'year' => $year,
 			'month' => $month,
 			'total_day' => $total_day,
 			'time' => $time,
-			'query' => $query->result(),
-			'arr' => $arr,
+			'select' => $select,
 		);
 		
 		$this->load->view("test", $data);
+	}
+
+	private function select($year, $month)
+	{
+		$arr = array();
+		$this->load->database();
+		$query = $this->db->query("select * from calendar where year=$year and month=$month;");
+
+		foreach($query->result() as $row){
+			$arr[$row->day] = $row->text;
+			// var_dump($row);
+		}
+		return $arr;
+	}
+
+	public function insert()
+	{
+		$year = $this->input->post("year");
+		$month = $this->input->post("month");
+		$text = $this->input->post("text_save");
+		$isError = false;
+
+		// $insert = array(
+		// 	'year' => $year,
+		// 	'month' => $month,
+		// 	'text' => $text,
+		// );
+
+		$select = $this->select($year, $month);
+
+		if(!is_numeric($year) || !is_numeric($month) || ($year > 9999 || $month > 13) || ($year < 0 || $month < 0)){
+			echo "잘못된 형식입니다.";
+			$isError = true;
+		}
+
+		$this->load->database();
+		foreach($text as $day => $in){
+			$data = array(
+				'year' => $year,
+				'month' => $month,
+				'day' => $day+1,
+				'text' => $in,
+			);
+			if(isset($select[$day+1]))
+			{
+				$this->db->set('text', $in);
+				$this->db->where('year', $year);
+				$this->db->where('month', $month);
+				$this->db->where('day', $day+1);
+				$this->db->update('calendar');
+			}
+			else
+			{
+				$this->db->insert('calendar', $data);
+			}
+		}
+		$this->load->helper('url');
+		redirect("https://localhost:10443/sample/index.php/Hello/calendar?year=$year&month=$month");
+		// $query = $this->db->insert('calendar', $insert);
+
 	}
 }
