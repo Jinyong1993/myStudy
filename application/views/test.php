@@ -1,29 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <style>
     td {border: 1px solid black;}
+
+    .table-condensed{
+        cursor:move;
+    }
 </style>
 </head>
+
 <body>
 <form method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
     <input type="text" name="year" value="<?php echo $year ?>">/<input type="text" name="month" value="<?php echo $month ?>">
     <button type="submit">search</button>
     <br>
     <?php if($month == 1) : ?>
-        <a href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12">previous month</a>
+        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12" role="button">previous month</a>
     <?php else : ?>
-        <a href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month-1?>">previous month</a>
+        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month-1?>">previous month</a>
     <?php endif ?>
     <?php if($month == 12) : ?>
-        <a href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year+1) ?>&month=1">next month</a>
+        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year+1) ?>&month=1">next month</a>
     <?php else : ?>
-        <a href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">next month</a>
+        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">next month</a>
     <?php endif ?>
 </form>
 <form method="POST" action="https://localhost:10443/sample/index.php/Hello/insert">
     <input type="hidden" name="year" value="<?php echo $year ?>"><input type="hidden" name="month" value="<?php echo $month ?>">
-    <button type="submit">save</button>
 <?php if(!$isError) : ?>
 <!--
 <table name="table">
@@ -65,8 +78,8 @@
 </table>
 <?php endif ?>-->
 
-
-<table>
+<h1 >カレンダー</h1>
+<table class="table table-condensed">
     <?php
     $first = "$year/$month/1";
     $time_stamp = strtotime($first);
@@ -115,7 +128,18 @@
 
     </tfoot>
 </table>
+<button class="btn btn-success" type="submit">save</button>
+<address>
+  <strong>Twitter, Inc.</strong><br>
+  1355 Market Street, Suite 900<br>
+  San Francisco, CA 94103<br>
+  <abbr title="Phone">P:</abbr> (123) 456-7890
+</address>
 
+<address>
+  <strong>Full Name</strong><br>
+  <a href="mailto:#">first.last@example.com</a>
+</address>
 </form>
 </body>
 </html>
