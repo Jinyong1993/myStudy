@@ -25,7 +25,7 @@
     <input type="hidden" name="year" value="<?php echo $year ?>"><input type="hidden" name="month" value="<?php echo $month ?>">
     <button type="submit">save</button>
 <?php if(!$isError) : ?>
-
+<!--
 <table name="table">
     <tr>
         <td>날짜</td>
@@ -63,7 +63,7 @@
     endfor
     ?>
 </table>
-<?php endif ?>
+<?php endif ?>-->
 
 
 <table>
