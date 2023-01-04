@@ -63,6 +63,58 @@
     ?>
 </table>
 <?php endif ?>
+
+
+<table>
+    <?php
+    $first = "$year/$month/1";
+    $time_stamp = strtotime($first);
+    $last = strtotime(date("Y/m/t", $time_stamp));
+    $total_day = date("t", $time_stamp);
+
+    $start_day_week = (int) date("w", $time_stamp);
+    $total_week = (int) ceil(($total_day + $start_day_week) / 7);
+    ?>
+    <thead>
+        <tr>
+            <th>日</th>
+            <th>月</th>
+            <th>火</th>
+            <th>水</th>
+            <th>木</th>
+            <th>金</th>
+            <th>土</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    <?php
+    $day = 1;
+    for($i=0; $i<$total_week; $i++){
+    ?>
+        <tr>
+    <?php
+        for($j=0; $j<7; $j++){
+    ?>
+        <td>
+            <?php if (($day > 1 || $j >= $start_day_week) && ($total_day >= $day)) : ?>
+                <?php echo $day ?>
+                <br>
+                <textarea name="text_save[]"><?php echo isset($select[$day]) ? $select[$day] : '';?></textarea>
+                <?php $day++ ?>
+            <?php endif ?>
+        </td>
+    <?php
+        }
+    }
+    ?>
+    </tbody>
+
+    <tfoot>
+
+    </tfoot>
+</table>
+
 </form>
 </body>
 </html>
