@@ -77,6 +77,7 @@ class Hello extends CI_Controller {
 		$year = $this->input->post("year");
 		$month = $this->input->post("month");
 		$text = $this->input->post("text_save");
+		$color = $this->input->post("color");
 		$isError = false;
 
 		// $insert = array(
@@ -93,16 +94,19 @@ class Hello extends CI_Controller {
 		}
 
 		$this->load->database();
+		
 		foreach($text as $day => $in){
 			$data = array(
 				'year' => $year,
 				'month' => $month,
 				'day' => $day+1,
 				'text' => $in,
+				'color' => $color[$day],
 			);
 			if(isset($select[$day+1]))
 			{
 				$this->db->set('text', $in);
+				$this->db->set('color', $color[$day]);
 				$this->db->where('year', $year);
 				$this->db->where('month', $month);
 				$this->db->where('day', $day+1);
@@ -113,6 +117,7 @@ class Hello extends CI_Controller {
 				$this->db->insert('calendar', $data);
 			}
 		}
+
 		$this->load->helper('url');
 		redirect("https://localhost:10443/sample/index.php/Hello/calendar?year=$year&month=$month");
 		// $query = $this->db->insert('calendar', $insert);

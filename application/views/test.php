@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-1.12.4.min.js"></script>
     <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -10,6 +13,40 @@
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="https://localhost:10443/sample/assets/js/bootstrap-colorpicker.min.js"></script>
+<link rel="stylesheet" href="https://localhost:10443/sample/assets/css/bootstrap-colorpicker.min.css">
+
+<script>
+    $(function(){
+        var days = [];
+
+        $("#output").click(function () {
+            console.log($(':checkbox[name="check_test"]:checked'));
+            $(':checkbox[name="check_test"]:checked').each(function () {
+                days.push($(this).val());
+                $("#output_area").text(days);
+                console.log($(this).parent());
+            });
+        });
+
+        $("#del").click(function(){
+           $(':checkbox[name="check_test"]:checked').parent("td").children("textarea").empty();
+        });
+
+        $("#input").click(function(){
+            var input_text = $("#input_text").val();
+            $(':checkbox[name="check_test"]:checked').parent("td").children("textarea").text(input_text);
+        });
+
+        $('.color_change').change(function(){
+            $(this).parent("td").css({
+                "background-color":$(this).val()
+            })
+        });
+    });
+</script>
+
 <style>
     td {border: 1px solid black;}
 
@@ -77,13 +114,12 @@
     ?>
 </table>
 <?php endif ?>-->
-
 <h1 >カレンダー</h1>
 <table class="table table-condensed">
     <?php
     $first = "$year/$month/1";
     $time_stamp = strtotime($first);
-    $last = strtotime(date("Y/m/t", $time_stamp));
+    // $last = strtotime(date("Y/m/t", $time_stamp));
     $total_day = date("t", $time_stamp);
 
     $start_day_week = (int) date("w", $time_stamp);
@@ -113,6 +149,8 @@
         <td>
             <?php if (($day > 1 || $j >= $start_day_week) && ($total_day >= $day)) : ?>
                 <?php echo $day ?>
+                <input type="checkbox" class="chk" name="check_test" value="<?php echo $day ?>">
+                <input class="color_change" name="color[]" type="color" value=""/>&nbsp;<button class="set_color btn btn-primary btn-xs" type="button">適用</button>
                 <br>
                 <textarea name="text_save[]"><?php echo isset($select[$day]) ? $select[$day] : '';?></textarea>
                 <?php $day++ ?>
@@ -122,16 +160,50 @@
         }
     }
     ?>
+    <p>選択 <span id="output_area"></span></p>
+    <input type="button" id="output" value="outputボタン"/>
     </tbody>
 
     <tfoot>
-
+        
     </tfoot>
 </table>
-<button class="btn btn-success" type="submit">save</button>
+<button class="btn btn-success" type="submit">保存</button>
+<button class="btn btn-danger" id="del" type="button">削除</button>
+<input type="text" id="input_text"/>&nbsp;<button class="btn btn-primary" id="input" type="button">入力</button>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">入力</button>
+
+<!-- modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">New message</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="recipient-name" class="control-label">Recipient:</label>
+            <input type="text" class="form-control" id="recipient-name">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="control-label">Message:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Send message</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <address>
   <strong>Twitter, Inc.</strong><br>
-  1355 Market Street, Suite 900<br>
+  1355 Market Street, Suite 900<br>           
   San Francisco, CA 94103<br>
   <abbr title="Phone">P:</abbr> (123) 456-7890
 </address>
