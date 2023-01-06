@@ -21,7 +21,7 @@
     $(function(){
         var days = [];
 
-        $("#output").click(function () {
+        $("#output").click(function (){
             console.log($(':checkbox[name="check_test"]:checked'));
             $(':checkbox[name="check_test"]:checked').each(function () {
                 days.push($(this).val());
@@ -30,20 +30,37 @@
             });
         });
 
-        $("#del").click(function(){
+        $("#del").click(function (){
            $(':checkbox[name="check_test"]:checked').parent("td").children("textarea").empty();
         });
 
-        $("#input").click(function(){
+        $("#input").click(function (){
             var input_text = $("#input_text").val();
             $(':checkbox[name="check_test"]:checked').parent("td").children("textarea").text(input_text);
         });
 
-        $('.color_change').change(function(){
+        $('.color_change').change(function (){
             $(this).parent("td").css({
                 "background-color":$(this).val()
             })
         });
+
+        $("#check_all").click(function (){
+            if($(this).is(":checked")) {
+                $("input[name=check_test]").prop("checked", true);
+            } else {
+                $("input[name=check_test]").prop("checked", false);
+            } 
+        });
+
+        $("#color_change_all").change(function (){
+            $("input[name=check_test]:checked").parent("td").css({
+                "background-color":$(this).val()
+            })
+            
+            $("input[name=check_test]:checked").parent("td")
+            .children(".color_change").val($(this).val());
+        })
     });
 </script>
 
@@ -114,6 +131,7 @@
     ?>
 </table>
 <?php endif ?>-->
+
 <h1 >カレンダー</h1>
 <table class="table table-condensed">
     <?php
@@ -150,26 +168,26 @@
         <?php 
         $result = isset($select[$day]) ? $select[$day] : null;
         ?>
-        
-            <?php if (($day > 1 || $j >= $start_day_week) && ($total_day >= $day)) : ?>
-                <td style="background:<?php echo isset($result->color) ? $result->color : "white" ?>">
-                <?php echo $day ?>
-                <input type="checkbox" class="chk" name="check_test" value="<?php echo $day ?>">
-                <input class="color_change" name="color[]" type="color" value="<?php echo isset($result->color) ? $result->color : "#ffffff" ?>"/>
-                &nbsp;<button class="set_color btn btn-primary btn-xs" type="button">適用</button>
-                <br>
-                <textarea name="text_save[]"><?php echo isset($result->text) ? $result->text : '';?></textarea>
-                <?php $day++ ?>
-                </td>
-                <?php else : ?>
-                <td></td>
-            <?php endif ?>
+        <?php if (($day > 1 || $j >= $start_day_week) && ($total_day >= $day)) : ?>
+            <td style="background:<?php echo isset($result->color) ? $result->color : "white" ?>">
+            <?php echo $day ?>
+            <input type="checkbox" class="chk" name="check_test" value="<?php echo $day ?>">
+            <input class="color_change" name="color[]" type="color" value="<?php echo isset($result->color) ? $result->color : "#ffffff" ?>"/>
+            &nbsp;<button class="set_color btn btn-primary btn-xs" type="button">適用</button>
+            <br>
+            <textarea name="text_save[]"><?php echo isset($result->text) ? $result->text : '';?></textarea>
+            <?php $day++ ?>
+            </td>
+            <?php else : ?>
+            <td></td>
+        <?php endif ?>
     <?php
         }
     }
     ?>
     <p>選択 <span id="output_area"></span></p>
     <input type="button" id="output" value="outputボタン"/>
+    <input type="checkbox" id="check_all"/>
     </tbody>
 
     <tfoot>
@@ -178,7 +196,9 @@
 </table>
 <button class="btn btn-success" type="submit">保存</button>
 <button class="btn btn-danger" id="del" type="button">削除</button>
-<input type="text" id="input_text"/>&nbsp;<button class="btn btn-primary" id="input" type="button">入力</button>
+<input type="text" id="input_text"/>&nbsp;
+<input type="color" id="color_change_all" value="#ffffff"/>
+<button class="btn btn-primary" id="input" type="button">入力</button>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">入力</button>
 
 <!-- modal -->
