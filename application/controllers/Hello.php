@@ -62,12 +62,14 @@ class Hello extends CI_Controller {
 	private function select($year, $month)
 	{
 		$arr = array();
+
 		$this->load->database();
 		$query = $this->db->query("select * from calendar where year=$year and month=$month;");
 
+		
 		foreach($query->result() as $row){
-			$arr[$row->day] = $row->text;
-			// var_dump($row);
+			$arr[$row->day] = $row;
+			// var_dump($row->text);
 		}
 		return $arr;
 	}
@@ -94,7 +96,6 @@ class Hello extends CI_Controller {
 		}
 
 		$this->load->database();
-		
 		foreach($text as $day => $in){
 			$data = array(
 				'year' => $year,
