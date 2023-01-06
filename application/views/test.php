@@ -35,7 +35,7 @@
 
         $("#input").click(function (){
             var input_text = $("#input_text").val();
-            $(':checkbox[name="check_test"]:checked').parent("td").children("textarea").text(input_text);
+            $(':checkbox[name="check_test"]:checked').parent("td").children("textarea").val(input_text);
         });
 
         $('.color_change').change(function (){
@@ -50,6 +50,7 @@
             } else {
                 $("input[name=check_test]").prop("checked", false);
             } 
+            console.log($("input[name=check_test]"));
         });
 
         $("#color_change_all").change(function (){
@@ -197,7 +198,7 @@
             <input class="color_change" name="color[]" type="color" value="<?php echo isset($result->color) ? $result->color : "#ffffff" ?>"/>
             &nbsp;<button class="set_color btn btn-primary btn-xs" type="button">適用</button>
             <br>
-            <textarea name="text_save[]"><?php echo isset($result->text) ? $result->text : '';?></textarea>
+            <textarea id="" name="text_save[]"><?php echo isset($result->text) ? $result->text : '';?></textarea>
             <?php $day++ ?>
             </td>
             <?php else : ?>
@@ -220,7 +221,7 @@
 <button class="btn btn-danger" id="del" type="button">削除</button>
 <input type="text" id="input_text"/>&nbsp;
 <input type="color" id="color_change_all" value="#ffffff"/>
-<button class="btn btn-primary" id="input" type="button">入力</button>
+<button class="btn btn-primary" id="input" type="button">テキスト入力</button>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">入力</button>
 
 <!-- modal -->
