@@ -132,6 +132,8 @@ class Hello extends CI_Controller {
 		$day = $this->input->post('day');
 		$text = $this->input->post('text');
 		$color = $this->input->post('color');
+
+		// log_message('debug', $text);
 		
 		$data = array(
 			'year' => $year,
