@@ -140,22 +140,30 @@
     <tbody>
     <?php
     $day = 1;
+
     for($i=0; $i<$total_week; $i++){
     ?>
         <tr>
     <?php
         for($j=0; $j<7; $j++){
     ?>
-        <td>
+        <?php 
+        $result = isset($select[$day]) ? $select[$day] : null;
+        ?>
+        
             <?php if (($day > 1 || $j >= $start_day_week) && ($total_day >= $day)) : ?>
+                <td style="background:<?php echo isset($result->color) ? $result->color : "white" ?>">
                 <?php echo $day ?>
                 <input type="checkbox" class="chk" name="check_test" value="<?php echo $day ?>">
-                <input class="color_change" name="color[]" type="color" value=""/>&nbsp;<button class="set_color btn btn-primary btn-xs" type="button">適用</button>
+                <input class="color_change" name="color[]" type="color" value="<?php echo isset($result->color) ? $result->color : "#ffffff" ?>"/>
+                &nbsp;<button class="set_color btn btn-primary btn-xs" type="button">適用</button>
                 <br>
-                <textarea name="text_save[]"><?php echo isset($select[$day]) ? $select[$day] : '';?></textarea>
+                <textarea name="text_save[]"><?php echo isset($result->text) ? $result->text : '';?></textarea>
                 <?php $day++ ?>
+                </td>
+                <?php else : ?>
+                <td></td>
             <?php endif ?>
-        </td>
     <?php
         }
     }
