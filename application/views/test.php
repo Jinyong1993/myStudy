@@ -22,7 +22,6 @@
         var days = [];
 
         $("#output").click(function (){
-            console.log($(':checkbox[name="check_test"]:checked'));
             $(':checkbox[name="check_test"]:checked').each(function () {
                 days.push($(this).val());
                 $("#output_area").text(days);
@@ -61,6 +60,29 @@
             $("input[name=check_test]:checked").parent("td")
             .children(".color_change").val($(this).val());
         })
+
+        $(".set_color").click(function (){
+            $("#year_ajax").val();
+            $("#month_ajax").val();
+            $(this).parent("td").children(":checkbox[name=check_test]").val();
+            $(this).parent("td").children("textarea").val();
+            $(this).parent("td").children(".color_change").val();
+
+            var ajax_data = {
+                year:$("#year_ajax").val(),
+                month:$("#month_ajax").val(),
+                day:$(this).parent("td").children(":checkbox[name=check_test]").val(),
+                text:$(this).parent("td").children("textarea").val(),
+                color:$(this).parent("td").children(".color_change").val()
+            }
+            $.ajax({
+                url: "calendar_ajax_controller",
+                type: "post",
+                data: ajax_data,
+            }).done(function(data) {
+                alert(data);
+            });
+        });
     });
 </script>
 
@@ -89,8 +111,8 @@
         <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">next month</a>
     <?php endif ?>
 </form>
-<form method="POST" action="https://localhost:10443/sample/index.php/Hello/insert">
-    <input type="hidden" name="year" value="<?php echo $year ?>"><input type="hidden" name="month" value="<?php echo $month ?>">
+<form method="POST" id="ajax_form" action="https://localhost:10443/sample/index.php/Hello/insert">
+    <input type="hidden" id="year_ajax" name="year" value="<?php echo $year ?>"><input type="hidden" id="month_ajax" name="month" value="<?php echo $month ?>">
 <?php if(!$isError) : ?>
 <!--
 <table name="table">
@@ -130,7 +152,7 @@
     endfor
     ?>
 </table>
-<?php endif ?>-->
+<?php endif ?> -->
 
 <h1 >カレンダー</h1>
 <table class="table table-condensed">

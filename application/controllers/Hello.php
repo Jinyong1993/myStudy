@@ -96,6 +96,7 @@ class Hello extends CI_Controller {
 		}
 
 		$this->load->database();
+
 		foreach($text as $day => $in){
 			$data = array(
 				'year' => $year,
@@ -123,5 +124,53 @@ class Hello extends CI_Controller {
 		redirect("https://localhost:10443/sample/index.php/Hello/calendar?year=$year&month=$month");
 		// $query = $this->db->insert('calendar', $insert);
 
+	}
+
+	public function calendar_ajax_controller(){
+		$year = $this->input->post('year');
+		$month = $this->input->post('month');
+		$day = $this->input->post('day');
+		$text = $this->input->post('text');
+		$color = $this->input->post('color');
+		
+		$data = array(
+			'year' => $year,
+			'month' => $month,
+			'day' => $day,
+			'text' => $text,
+			'color' => $color,
+		);
+
+		$select = $this->select($year, $month);
+		$this->load->database();
+
+		if(isset($select[$day]))
+			{
+				$this->db->set('text', $text);
+				$this->db->set('color', $color);
+				$this->db->where('year', $year);
+				$this->db->where('month', $month);
+				$this->db->where('day', $day);
+				$this->db->update('calendar');
+			}
+			else
+			{
+				$this->db->insert('calendar', $data);
+		}
+		echo "処理しました。";
+	}
+
+	public function ajax_test() {
+		$data = array();
+		$this->load->view('ajax_view_test', $data);
+	}
+
+	public function ajax_controller(){
+		$number1 = $_POST['number1'];
+		$number2 = $_POST['number2'];
+
+		$result = $number1 + $number2;
+
+		echo $result;
 	}
 }
