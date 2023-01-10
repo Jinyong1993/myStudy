@@ -167,7 +167,9 @@
           </ul>
         </li>
       </ul>
-      <form class="navbar-form navbar-left"method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar" target="iframe1">
+
+
+      <form class="navbar-form navbar-left" method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
         <?php if($month == 1) : ?>
         <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12" role="button">先月</a>
         <?php else : ?>
@@ -184,6 +186,8 @@
         </div>
         <button type="submit" id="search" class="btn btn-default">検索</button>
       </form>
+
+
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#">Link</a></li>
         <li class="dropdown">
@@ -206,33 +210,11 @@
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <strong>エラー</strong>
 </div>
-<!--<iframe id="iframe1" name="iframe1" style="display:none"></iframe>-->
-
-<!--
-<form method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
-    <input type="text" name="year" value="<?php echo $year ?>">/<input type="text" name="month" value="<?php echo $month ?>">
-    <button type="submit">search</button>
-    <br>
-    <?php if($month == 1) : ?>
-        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12" role="button">previous month</a>
-    <?php else : ?>
-        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month-1?>">previous month</a>
-    <?php endif ?>
-    <?php if($month == 12) : ?>
-        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year+1) ?>&month=1">next month</a>
-    <?php else : ?>
-        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">next month</a>
-    <?php endif ?>
-</form>
--->
-
-
-<form method="POST" id="ajax_form" action="https://localhost:10443/sample/index.php/Hello/insert">
+<form method="POST" action="https://localhost:10443/sample/index.php/Hello/insert">
     <input type="hidden" id="year_ajax" name="year" value="<?php echo $year ?>"><input type="hidden" id="month_ajax" name="month" value="<?php echo $month ?>">
-</form>
 
-<!--
 <?php if(!$isError) : ?>
+<!--
 <table name="table">
     <tr>
         <td>날짜</td>
@@ -340,13 +322,15 @@
         
     </tfoot>
 </table>
-<input type="checkbox" id="check_all"/>
-<button class="btn btn-success" type="submit">保存</button>
-<button class="btn btn-danger" id="del" type="button">削除</button>
-<input type="text" id="input_text"/>&nbsp;
-<input type="color" id="color_change_all" value="#ffffff"/>
-<button class="btn btn-primary" id="input" type="button">テキスト入力</button>
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">入力</button>
+     <input type="checkbox" id="check_all"/>
+    <button class="btn btn-success" type="submit">保存</button>
+    <button class="btn btn-danger" id="del" type="button">削除</button>
+    <input type="text" id="input_text"/>&nbsp;
+    <input type="color" id="color_change_all" value="#ffffff"/>
+    <button class="btn btn-primary" id="input" type="button">テキスト入力</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">入力</button>
+</form>
+
 
 <!-- modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
