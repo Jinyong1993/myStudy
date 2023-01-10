@@ -18,8 +18,24 @@
 <link rel="stylesheet" href="https://localhost:10443/sample/assets/css/bootstrap-colorpicker.min.css">
 
 <script>
+    function validate(year, month) {
+        if(isNaN(year) || isNaN(month) || (year > 9999 || month > 12) || (year < 1 || month < 1)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     $(function(){
         var days = [];
+
+        $("#search").click(function (event){
+            var result = validate($("#year_search").val(), $("#month_search").val());
+            if(result){
+                event.preventDefault();
+                $("#alert_message").show();
+            }
+        });
 
         $("#output").click(function (){
             $(':checkbox[name="check_test"]:checked').each(function () {
@@ -76,6 +92,7 @@
                 text:$(this).parent("td").children("textarea").val(),
                 color:$(this).parent("td").children(".color_change").val()
             }
+
             $.ajax({
                 url: "calendar_ajax_controller",
                 type: "post",
@@ -131,7 +148,7 @@
           </ul>
         </li>
       </ul>
-      <form class="navbar-form navbar-left"method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
+      <form class="navbar-form navbar-left"method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar" target="iframe1">
         <?php if($month == 1) : ?>
         <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12" role="button">先月</a>
         <?php else : ?>
@@ -142,11 +159,11 @@
         <?php else : ?>
             <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">来月</a>
         <?php endif ?>
-        <div class="form-group">
-          <input type="text" name="year" value="<?php echo $year ?>" class="form-control" placeholder="年">
-          <input type="text" name="month" value="<?php echo $month ?>" class="form-control" placeholder="月">
+        <div id="y_m_search" class="form-group">
+          <input type="text" id="year_search" name="year" value="<?php echo $year ?>" class="form-control" placeholder="年">
+          <input type="text" id="month_search" name="month" value="<?php echo $month ?>" class="form-control" placeholder="月">
         </div>
-        <button type="submit" class="btn btn-default">検索</button>
+        <button type="submit" id="search" class="btn btn-default">検索</button>
       </form>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#">Link</a></li>
@@ -165,6 +182,12 @@
   </div><!-- /.container-fluid -->
 </nav>
 
+
+<div id="alert_message" class="alert alert-warning alert-dismissible" role="alert" style="display:none">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Warning!</strong> Better check yourself, you're not looking too good.
+</div>
+<!--<iframe id="iframe1" name="iframe1" style="display:none"></iframe>-->
 
 <!--
 <form method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
@@ -187,10 +210,10 @@
 
 <form method="POST" id="ajax_form" action="https://localhost:10443/sample/index.php/Hello/insert">
     <input type="hidden" id="year_ajax" name="year" value="<?php echo $year ?>"><input type="hidden" id="month_ajax" name="month" value="<?php echo $month ?>">
-<?php if(!$isError) : ?>
-
+</form>
 
 <!--
+<?php if(!$isError) : ?>
 <table name="table">
     <tr>
         <td>날짜</td>

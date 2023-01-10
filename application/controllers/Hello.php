@@ -30,15 +30,16 @@ class Hello extends CI_Controller {
 		$year = $this->input->get("year") ?: date('Y');
 		$month = $this->input->get("month") ?: date('m');
 		
-		$isError = false;
 		$arr = array();
+
+		$isError = $this->validate($year, $month);
+
+		if($isError){
+			$this->load->helper('url');
+			redirect("https://localhost:10443/sample/index.php/Hello/calendar");
+		}
 		
 		$search = !empty($_GET['search']);
-
-		if(!is_numeric($year) || !is_numeric($month) || ($year > 9999 || $month > 13) || ($year < 0 || $month < 0)){
-			echo "잘못된 형식입니다.";
-			$isError = true;
-		}
 
 		$first_date = "$year-$month-01";
 		$time = strtotime($first_date);
@@ -80,7 +81,12 @@ class Hello extends CI_Controller {
 		$month = $this->input->post("month");
 		$text = $this->input->post("text_save");
 		$color = $this->input->post("color");
-		$isError = false;
+
+		$isError = $this->validate($year, $month);
+		if($isError){
+			$this->load->helper('url');
+			redirect("https://localhost:10443/sample/index.php/Hello/calendar");
+		}
 
 		// $insert = array(
 		// 	'year' => $year,
@@ -89,11 +95,6 @@ class Hello extends CI_Controller {
 		// );
 
 		$select = $this->select($year, $month);
-
-		if(!is_numeric($year) || !is_numeric($month) || ($year > 9999 || $month > 13) || ($year < 0 || $month < 0)){
-			echo "잘못된 형식입니다.";
-			$isError = true;
-		}
 
 		$this->load->database();
 
@@ -133,6 +134,12 @@ class Hello extends CI_Controller {
 		$text = $this->input->post('text');
 		$color = $this->input->post('color');
 
+		$isError = $this->validate($year, $month);
+		if($isError){
+			$this->load->helper('url');
+			echo "エラー";
+			return;
+		}
 		// log_message('debug', $text);
 		
 		$data = array(
@@ -146,18 +153,15 @@ class Hello extends CI_Controller {
 		$select = $this->select($year, $month);
 		$this->load->database();
 
-		if(isset($select[$day]))
-			{
-				$this->db->set('text', $text);
-				$this->db->set('color', $color);
-				$this->db->where('year', $year);
-				$this->db->where('month', $month);
-				$this->db->where('day', $day);
-				$this->db->update('calendar');
-			}
-			else
-			{
-				$this->db->insert('calendar', $data);
+		if(isset($select[$day])){
+			$this->db->set('text', $text);
+			$this->db->set('color', $color);
+			$this->db->where('year', $year);
+			$this->db->where('month', $month);
+			$this->db->where('day', $day);
+			$this->db->update('calendar');
+		} else {
+			$this->db->insert('calendar', $data);
 		}
 		echo "処理しました。";
 	}
@@ -174,5 +178,13 @@ class Hello extends CI_Controller {
 		$result = $number1 + $number2;
 
 		echo $result;
+	}
+
+	private function validate($year, $month){
+		if(!is_numeric($year) || !is_numeric($month) || ($year > 9999 || $month > 12) || ($year < 1 || $month < 1)){
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

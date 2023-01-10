@@ -110,7 +110,6 @@ if ( ! function_exists('elements'))
 		{
 			$return[$item] = array_key_exists($item, $array) ? $array[$item] : $default;
 		}
-
 		return $return;
 	}
 }
