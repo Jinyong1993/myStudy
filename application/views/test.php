@@ -2,9 +2,6 @@
 <html>
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script type="text/javascript" src="//code.jquery.com/jquery-3.4.1.min.js"></script>
-<script type="text/javascript" src="//code.jquery.com/jquery-2.2.4.min.js"></script>
-<script type="text/javascript" src="//code.jquery.com/jquery-1.12.4.min.js"></script>
     <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -13,6 +10,11 @@
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<!-- datepicker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js" integrity="sha512-zI0UB5DgB1Bvvrob7MyykjmbEI4e6Qkf5Aq+VJow4nwRZrL2hYKGqRf6zgH3oBQUpxPLcF2IH5PlKrW6O3y3Qw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script type="text/javascript" src="https://localhost:10443/sample/assets/js/bootstrap-colorpicker.min.js"></script>
 <link rel="stylesheet" href="https://localhost:10443/sample/assets/css/bootstrap-colorpicker.min.css">
@@ -32,8 +34,8 @@
         $("#search").click(function (event){
             var result = validate($("#year_search").val(), $("#month_search").val());
             if(result){
-                event.preventDefault();
                 $("#alert_message").show();
+                event.preventDefault();
             }
         });
 
@@ -58,6 +60,18 @@
             $(this).parent("td").css({
                 "background-color":$(this).val()
             })
+        });
+
+        $("#year_search").datepicker( {
+            language: "ja",
+            minViewMode: 2,
+            format: "yyyy"
+        });
+
+        $("#month_search").datepicker( {
+            language: "ja",
+            minViewMode: 1,
+            format: "m"
         });
 
         $("#check_all").click(function (){
@@ -112,6 +126,11 @@
     .table-condensed{
         cursor:move;
     }
+
+    th {
+        border: 1px solid black;
+        align: center;
+    }
 </style>
 </head>
 
@@ -160,8 +179,8 @@
             <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">来月</a>
         <?php endif ?>
         <div id="y_m_search" class="form-group">
-          <input type="text" id="year_search" name="year" value="<?php echo $year ?>" class="form-control" placeholder="年">
-          <input type="text" id="month_search" name="month" value="<?php echo $month ?>" class="form-control" placeholder="月">
+          <input type="text" id="year_search" name="year" value="<?php echo $year ?>" class="date form-control" placeholder="年" autocomplete="off">
+          <input type="text" id="month_search" name="month" value="<?php echo $month ?>" class="date form-control" placeholder="月" autocomplete="off">
         </div>
         <button type="submit" id="search" class="btn btn-default">検索</button>
       </form>
@@ -185,7 +204,7 @@
 
 <div id="alert_message" class="alert alert-warning alert-dismissible" role="alert" style="display:none">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Warning!</strong> Better check yourself, you're not looking too good.
+  <strong>エラー</strong>
 </div>
 <!--<iframe id="iframe1" name="iframe1" style="display:none"></iframe>-->
 
@@ -267,13 +286,13 @@
     ?>
     <thead>
         <tr>
-            <th>日</th>
-            <th>月</th>
-            <th>火</th>
-            <th>水</th>
-            <th>木</th>
-            <th>金</th>
-            <th>土</th>
+            <th>日&nbsp;<input type="checkbox"/></th>
+            <th>月&nbsp;<input type="checkbox"/></th>
+            <th>火&nbsp;<input type="checkbox"/></th>
+            <th>水&nbsp;<input type="checkbox"/></th>
+            <th>木&nbsp;<input type="checkbox"/></th>
+            <th>金&nbsp;<input type="checkbox"/></th>
+            <th>土&nbsp;<input type="checkbox"/></th>
         </tr>
     </thead>
 
