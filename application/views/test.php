@@ -88,7 +88,9 @@
 </script>
 
 <style>
-    td {border: 1px solid black;}
+    td {
+        border: 1px solid black;
+    }
 
     .table-condensed{
         cursor:move;
@@ -97,6 +99,74 @@
 </head>
 
 <body>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar">1</span>
+        <span class="icon-bar">2</span>
+        <span class="icon-bar">3</span>
+      </button>
+      <a class="navbar-brand" href="https://localhost:10443/sample/index.php/Hello/calendar">カレンダー</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Link <span class="sr-only"></span></a></li>
+        <li><a href="#">Link</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">One more separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="navbar-form navbar-left"method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
+        <?php if($month == 1) : ?>
+        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12" role="button">先月</a>
+        <?php else : ?>
+            <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month-1?>">先月</a>
+        <?php endif ?>
+        <?php if($month == 12) : ?>
+            <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year+1) ?>&month=1">来月</a>
+        <?php else : ?>
+            <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">来月</a>
+        <?php endif ?>
+        <div class="form-group">
+          <input type="text" name="year" value="<?php echo $year ?>" class="form-control" placeholder="年">
+          <input type="text" name="month" value="<?php echo $month ?>" class="form-control" placeholder="月">
+        </div>
+        <button type="submit" class="btn btn-default">検索</button>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Link</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+
+<!--
 <form method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
     <input type="text" name="year" value="<?php echo $year ?>">/<input type="text" name="month" value="<?php echo $month ?>">
     <button type="submit">search</button>
@@ -112,9 +182,14 @@
         <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">next month</a>
     <?php endif ?>
 </form>
+-->
+
+
 <form method="POST" id="ajax_form" action="https://localhost:10443/sample/index.php/Hello/insert">
     <input type="hidden" id="year_ajax" name="year" value="<?php echo $year ?>"><input type="hidden" id="month_ajax" name="month" value="<?php echo $month ?>">
 <?php if(!$isError) : ?>
+
+
 <!--
 <table name="table">
     <tr>
@@ -153,9 +228,10 @@
     endfor
     ?>
 </table>
-<?php endif ?> -->
+<?php endif ?> 
+-->
 
-<h1 >カレンダー</h1>
+
 <table class="table table-condensed">
     <?php
     $first = "$year/$month/1";
@@ -208,15 +284,21 @@
         }
     }
     ?>
+
+
+    <!--
     <p>選択 <span id="output_area"></span></p>
     <input type="button" id="output" value="outputボタン"/>
-    <input type="checkbox" id="check_all"/>
+    -->
+
+
     </tbody>
 
     <tfoot>
         
     </tfoot>
 </table>
+<input type="checkbox" id="check_all"/>
 <button class="btn btn-success" type="submit">保存</button>
 <button class="btn btn-danger" id="del" type="button">削除</button>
 <input type="text" id="input_text"/>&nbsp;
@@ -253,15 +335,15 @@
 </div>
 
 <address>
-  <strong>Twitter, Inc.</strong><br>
-  1355 Market Street, Suite 900<br>           
-  San Francisco, CA 94103<br>
-  <abbr title="Phone">P:</abbr> (123) 456-7890
+  <strong>株式会社アイビーシステム</strong><br>
+  新潟県新潟市北区すみれ野2-1-12<br>
+  <abbr title="Phone">TEL</abbr> 025-257-3050<br>
+  <abbr title="Fax">FAX</abbr> 025-257-3060
 </address>
 
 <address>
-  <strong>Full Name</strong><br>
-  <a href="mailto:#">first.last@example.com</a>
+  <strong>ジョンジンヨン</strong><br>
+  <a href="mailto:#">jeong-jin-young@ib-system.co.jp</a>
 </address>
 </form>
 </body>
