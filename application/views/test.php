@@ -19,6 +19,7 @@
 <script type="text/javascript" src="https://localhost:10443/sample/assets/js/bootstrap-colorpicker.min.js"></script>
 <link rel="stylesheet" href="https://localhost:10443/sample/assets/css/bootstrap-colorpicker.min.css">
 
+
 <script>
     function validate(year, month) {
         if(isNaN(year) || isNaN(month) || (year > 9999 || month > 12) || (year < 1 || month < 1)){
@@ -94,6 +95,11 @@
             $("input[name=check_test]:checked").parent("td")
             .children(".color_change").val($(this).val());
         })
+
+        // $("#today_highlight").parent("td").css("background", "yellow");
+        $("#today_highlight").parent("td").animate({
+            borderWidth:3
+        },5000);
 
         $(".set_color").click(function (){
             $("#year_ajax").val();
@@ -271,47 +277,56 @@
     ?>
     <thead>
         <tr>
-            <th>日&nbsp;<input class="chk_date" data-weekday="Sunday" type="checkbox"/></th>
+            <th style="color:red">日&nbsp;<input class="chk_date" data-weekday="Sunday" type="checkbox"/></th>
             <th>月&nbsp;<input class="chk_date" data-weekday="Monday" type="checkbox"/></th>
             <th>火&nbsp;<input class="chk_date" data-weekday="Tuesday" type="checkbox"/></th>
             <th>水&nbsp;<input class="chk_date" data-weekday="Wednesday" type="checkbox"/></th>
             <th>木&nbsp;<input class="chk_date" data-weekday="Thursday" type="checkbox"/></th>
             <th>金&nbsp;<input class="chk_date" data-weekday="Friday" type="checkbox"/></th>
-            <th>土&nbsp;<input class="chk_date" data-weekday="Saturday" type="checkbox"/></th>
+            <th style="color:blue">土&nbsp;<input class="chk_date" data-weekday="Saturday" type="checkbox"/></th>
         </tr>
     </thead>
 
     <tbody>
     <?php
     $day = 1;
+    $today = date("d");
+    ?>
 
-    for($i=0; $i<$total_week; $i++){
-    ?>
-        <tr>
+<?php
+for($i=0; $i<$total_week; $i++){
+?>
+    <tr>
     <?php
-        for($j=0; $j<7; $j++){
-            $day_week = date("l", strtotime("$year/$month/$day"));
-    ?>
-        <?php 
+    for($j=0; $j<7; $j++){
+        $day_week = date("l", strtotime("$year/$month/$day"));
         $result = isset($select[$day]) ? $select[$day] : null;
-        ?>
+    ?>
         <?php if (($day > 1 || $j >= $start_day_week) && ($total_day >= $day)) : ?>
             <td style="background:<?php echo isset($result->color) ? $result->color : "white" ?>">
-            <?php echo $day ?>
-            <input type="checkbox" data-weekday="<?php echo $day_week ?>" class="chk" name="check_test" value="<?php echo $day ?>">
-            <input class="color_change" name="color[]" type="color" value="<?php echo isset($result->color) ? $result->color : "#ffffff" ?>"/>
-            &nbsp;<button class="set_color btn btn-primary btn-xs" type="button">適用</button>
-            <br>
-            <textarea id="" name="text_save[]"><?php echo isset($result->text) ? $result->text : '';?></textarea>
-            <?php $day++ ?>
+                    <?php if($day_week == "Sunday") : ?>
+                        <span style="color:red"><?php echo $day ?></span>
+                    <?php elseif($day_week == "Saturday") : ?>
+                        <span style="color:blue"><?php echo $day ?></span>
+                    <?php else : ?>
+                        <span style="color:black"><?php echo $day ?></span>
+                    <?php endif ?>
+                    <?php if($today == $day) : ?>
+                        <span style="color:red" id="today_highlight">本日</span>
+                    <?php endif ?>
+                <input type="checkbox" data-weekday="<?php echo $day_week ?>" class="chk" name="check_test" value="<?php echo $day ?>">
+                <input class="color_change" name="color[]" type="color" value="<?php echo isset($result->color) ? $result->color : "#ffffff" ?>"/>
+                &nbsp;<button class="set_color btn btn-primary btn-xs" type="button">適用</button><br>
+                <textarea id="" name="text_save[]"><?php echo isset($result->text) ? $result->text : '';?></textarea>
+                <?php $day++ ?>
             </td>
             <?php else : ?>
             <td></td>
         <?php endif ?>
     <?php
-        }
     }
-    ?>
+}
+?>
 
 
     <!--
