@@ -74,13 +74,16 @@
             format: "m"
         });
 
+        $(".chk_date").click(function(){
+            $("input[data-weekday="+$(this).data("weekday")+"]").prop("checked", $(this).is(":checked"));
+        });
+
         $("#check_all").click(function (){
             if($(this).is(":checked")) {
                 $("input[name=check_test]").prop("checked", true);
             } else {
                 $("input[name=check_test]").prop("checked", false);
             } 
-            console.log($("input[name=check_test]"));
         });
 
         $("#color_change_all").change(function (){
@@ -268,13 +271,13 @@
     ?>
     <thead>
         <tr>
-            <th>日&nbsp;<input type="checkbox"/></th>
-            <th>月&nbsp;<input type="checkbox"/></th>
-            <th>火&nbsp;<input type="checkbox"/></th>
-            <th>水&nbsp;<input type="checkbox"/></th>
-            <th>木&nbsp;<input type="checkbox"/></th>
-            <th>金&nbsp;<input type="checkbox"/></th>
-            <th>土&nbsp;<input type="checkbox"/></th>
+            <th>日&nbsp;<input class="chk_date" data-weekday="Sunday" type="checkbox"/></th>
+            <th>月&nbsp;<input class="chk_date" data-weekday="Monday" type="checkbox"/></th>
+            <th>火&nbsp;<input class="chk_date" data-weekday="Tuesday" type="checkbox"/></th>
+            <th>水&nbsp;<input class="chk_date" data-weekday="Wednesday" type="checkbox"/></th>
+            <th>木&nbsp;<input class="chk_date" data-weekday="Thursday" type="checkbox"/></th>
+            <th>金&nbsp;<input class="chk_date" data-weekday="Friday" type="checkbox"/></th>
+            <th>土&nbsp;<input class="chk_date" data-weekday="Saturday" type="checkbox"/></th>
         </tr>
     </thead>
 
@@ -287,6 +290,7 @@
         <tr>
     <?php
         for($j=0; $j<7; $j++){
+            $day_week = date("l", strtotime("$year/$month/$day"));
     ?>
         <?php 
         $result = isset($select[$day]) ? $select[$day] : null;
@@ -294,7 +298,7 @@
         <?php if (($day > 1 || $j >= $start_day_week) && ($total_day >= $day)) : ?>
             <td style="background:<?php echo isset($result->color) ? $result->color : "white" ?>">
             <?php echo $day ?>
-            <input type="checkbox" class="chk" name="check_test" value="<?php echo $day ?>">
+            <input type="checkbox" data-weekday="<?php echo $day_week ?>" class="chk" name="check_test" value="<?php echo $day ?>">
             <input class="color_change" name="color[]" type="color" value="<?php echo isset($result->color) ? $result->color : "#ffffff" ?>"/>
             &nbsp;<button class="set_color btn btn-primary btn-xs" type="button">適用</button>
             <br>
