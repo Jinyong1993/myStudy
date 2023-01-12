@@ -139,9 +139,7 @@ class Hello extends CI_Controller {
 				$this->db->where('month', $month);
 				$this->db->where('day', $day+1);
 				$this->db->update('calendar');
-			}
-			else
-			{
+			} else {
 				$this->db->insert('calendar', $data);
 			}
 		}

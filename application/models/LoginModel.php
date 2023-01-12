@@ -12,6 +12,8 @@ class LoginModel extends CI_Model {
         $this->session->sess_destroy();
         redirect("https://localhost:10443/sample/index.php/Login/index");
     }
+
+    
 }
 
 ?>
