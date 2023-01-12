@@ -4,7 +4,7 @@ class Hello extends CI_Controller {
 
 	public function __construct()
     {
-        parent::__construct();
+		parent::__construct();
 		$this->load->database();
         $this->load->library('session');
 		$this->load->helper('url');
@@ -12,9 +12,22 @@ class Hello extends CI_Controller {
 		$user_id = $this->session->userdata('user_id');
 		if(!isset($user_id))
 		{
-			redirect("https://localhost:10443/sample/index.php/Login/index");
+			$this->load->model('LoginModel');
+        	$this->LoginModel->logout();
+		} else {
+			$this->db->select('user_id');
+			$this->db->from('user');
+			$this->db->where('user_id', $user_id);
+			$query = $this->db->get();
+			$row = $query->first_row();
+
+			if(!isset($row))
+			{
+				$this->load->model('LoginModel');
+        		$this->LoginModel->logout();
+			}
 		}
-		
+
     }
 	
 	public function index()

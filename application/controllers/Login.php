@@ -40,7 +40,7 @@ class Login extends CI_Controller {
 
     public function logout()
     {
-        $this->session->sess_destroy();
-        redirect("https://localhost:10443/sample/index.php/Login/index");
+        $this->load->model('LoginModel');
+        $this->LoginModel->logout();
     }
 }
