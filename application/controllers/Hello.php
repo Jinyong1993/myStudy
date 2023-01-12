@@ -2,21 +2,21 @@
 
 class Hello extends CI_Controller {
 
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see https://codeigniter.com/userguide3/general/urls.html
-	 */
+	public function __construct()
+    {
+        parent::__construct();
+		$this->load->database();
+        $this->load->library('session');
+		$this->load->helper('url');
+
+		$user_id = $this->session->userdata('user_id');
+		if(!isset($user_id))
+		{
+			redirect("https://localhost:10443/sample/index.php/Login/index");
+		}
+		
+    }
+	
 	public function index()
 	{
 		$today = date('Y-m-d-H-i-s');
@@ -62,12 +62,19 @@ class Hello extends CI_Controller {
 
 	private function select($year, $month)
 	{
+		$this->load->library('session');
+		$user_id = $this->session->userdata('user_id');
+
 		$arr = array();
 
 		$this->load->database();
-		$query = $this->db->query("select * from calendar where year=$year and month=$month;");
+		$this->db->select('user_id, year, month, day, text, color');
+		$this->db->from('calendar');
+		$this->db->where('user_id', $user_id);
+		$this->db->where('year', $year);
+		$this->db->where('month', $month);
+		$query = $this->db->get();
 
-		
 		foreach($query->result() as $row){
 			$arr[$row->day] = $row;
 			// var_dump($row->text);
@@ -77,6 +84,9 @@ class Hello extends CI_Controller {
 
 	public function insert()
 	{
+		$this->load->library('session');
+		$user_id = $this->session->userdata('user_id');
+
 		$year = $this->input->post("year");
 		$month = $this->input->post("month");
 		$text = $this->input->post("text_save");
@@ -100,6 +110,7 @@ class Hello extends CI_Controller {
 
 		foreach($text as $day => $in){
 			$data = array(
+				'user_id' => $user_id,
 				'year' => $year,
 				'month' => $month,
 				'day' => $day+1,
@@ -110,6 +121,7 @@ class Hello extends CI_Controller {
 			{
 				$this->db->set('text', $in);
 				$this->db->set('color', $color[$day]);
+				$this->db->where('user_id', $user_id);
 				$this->db->where('year', $year);
 				$this->db->where('month', $month);
 				$this->db->where('day', $day+1);
@@ -128,6 +140,9 @@ class Hello extends CI_Controller {
 	}
 
 	public function calendar_ajax_controller(){
+		$this->load->library('session');
+		$user_id = $this->session->userdata('user_id');
+
 		$year = $this->input->post('year');
 		$month = $this->input->post('month');
 		$day = $this->input->post('day');
@@ -143,6 +158,7 @@ class Hello extends CI_Controller {
 		// log_message('debug', $text);
 		
 		$data = array(
+			'user_id' => $user_id,
 			'year' => $year,
 			'month' => $month,
 			'day' => $day,
@@ -156,6 +172,7 @@ class Hello extends CI_Controller {
 		if(isset($select[$day])){
 			$this->db->set('text', $text);
 			$this->db->set('color', $color);
+			$this->db->where('user_id', $user_id);
 			$this->db->where('year', $year);
 			$this->db->where('month', $month);
 			$this->db->where('day', $day);

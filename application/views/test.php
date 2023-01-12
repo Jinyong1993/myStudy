@@ -194,6 +194,7 @@
           <input type="text" id="month_search" name="month" value="<?php echo $month ?>" class="date form-control" placeholder="月" autocomplete="off">
         </div>
         <button type="submit" id="search" class="btn btn-default">検索</button>
+        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Login/logout">ログアウト</a>
       </form>
 
 
