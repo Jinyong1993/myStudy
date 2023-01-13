@@ -105,7 +105,40 @@
             }).done(function(data) {
                 alert(data);
             });
+
         });
+
+        $("#text_search_input").click(function() {
+            $("#text_search").val();
+            console.log($("#text_search").val());
+
+            $('#search_result').empty();
+
+            var text_object = {
+                text:$("#text_search").val()
+            }
+
+            $.ajax({
+                url: "search_ajax_controller",
+                type: "get",
+                data: text_object,
+                dataType: "json",
+            }).done(function(data) {
+                $.each(data, function(i,v){
+                    var date = v.year + '/' + v.month + '/' + v.day
+
+                    var a = '<a href="https://localhost:10443/sample/index.php/Hello/calendar?year='+v.year+'&month='+v.month+'">link</a>'
+                    var tr = '<tr><td>'+date+''+'</td> <td>'+v.text+'</td><td>'+a+'</td></tr>'
+                    
+                    $('#search_result').append(tr)
+                    
+                })
+            })
+
+        });
+
+
+
     });
 </script>
 
@@ -329,35 +362,47 @@ for($i=0; $i<$total_week; $i++){
     <button class="btn btn-danger" id="del" type="button">削除</button>
     <input type="text" id="input_text"/>&nbsp;
     <input type="color" id="color_change_all" value="#ffffff"/>
-    <button class="btn btn-primary" id="input" type="button">テキスト入力</button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">入力</button>
+    <button class="btn btn-default" id="input" type="button">テキスト入力</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#calendar_search" data-whatever="@fat">検索</button>
 </form>
 
 
 <!-- modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+<div class="modal fade" id="calendar_search" tabindex="0" role="dialog">
   <div class="modal-dialog" role="document">
+
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">New message</h4>
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">検索</h4>
+        </div>
+
+    <div class="modal-body">
+        <div class="text_input_group">
+            <label for="text_search" class="control-label">検索したいテキストを入力して下さい。</label>
+            <input type="text" class="form-control" id="text_search">
+            <button class="btn btn-default" id="text_search_input">入力</button>
+        </div>
+        <div class="output_group">
+            <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>日付</th>
+                    <th>内容</th>
+                    <th></th>
+                </tr>
+            </thead> 
+            <tbody id="search_result">
+
+            </tbody>   
+            </table>
+        </div>
       </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            <label for="recipient-name" class="control-label">Recipient:</label>
-            <input type="text" class="form-control" id="recipient-name">
-          </div>
-          <div class="form-group">
-            <label for="message-text" class="control-label">Message:</label>
-            <textarea class="form-control" id="message-text"></textarea>
-          </div>
-        </form>
-      </div>
+
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
       </div>
+
     </div>
   </div>
 </div>

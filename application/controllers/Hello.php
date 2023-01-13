@@ -10,6 +10,7 @@ class Hello extends CI_Controller {
 		$this->load->helper('url');
 
 		$user_id = $this->session->userdata('user_id');
+		
 		if(!isset($user_id))
 		{
 			$this->load->model('LoginModel');
@@ -150,6 +151,21 @@ class Hello extends CI_Controller {
 
 	}
 
+	public function search_ajax_controller(){
+		$this->load->library('session');
+		$user_id = $this->session->userdata('user_id');
+
+		$text = $this->input->get('text');
+
+		$this->db->from('calendar');
+		$this->db->like('text', $text);
+		$query = $this->db->get();
+		$result = $query->result();
+
+
+		echo json_encode($result);
+	}
+
 	public function calendar_ajax_controller(){
 		$this->load->library('session');
 		$user_id = $this->session->userdata('user_id');
@@ -168,7 +184,7 @@ class Hello extends CI_Controller {
 		}
 		// log_message('debug', $text);
 		
-		$data = array(
+		$search_data = array(
 			'user_id' => $user_id,
 			'year' => $year,
 			'month' => $month,
@@ -194,19 +210,19 @@ class Hello extends CI_Controller {
 		echo "処理しました。";
 	}
 
-	public function ajax_test() {
-		$data = array();
-		$this->load->view('ajax_view_test', $data);
-	}
+	// public function ajax_test() {
+	// 	$data = array();
+	// 	$this->load->view('ajax_view_test', $data);
+	// }
 
-	public function ajax_controller(){
-		$number1 = $_POST['number1'];
-		$number2 = $_POST['number2'];
+	// public function ajax_controller(){
+	// 	$number1 = $_POST['number1'];
+	// 	$number2 = $_POST['number2'];
 
-		$result = $number1 + $number2;
+	// 	$result = $number1 + $number2;
 
-		echo $result;
-	}
+	// 	echo $result;
+	// }
 
 	private function validate($year, $month){
 		if(!is_numeric($year) || !is_numeric($month) || ($year > 9999 || $month > 12) || ($year < 1 || $month < 1)){
