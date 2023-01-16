@@ -122,13 +122,17 @@
                 url: "search_ajax_controller",
                 type: "get",
                 data: text_object,
-                dataType: "json",
+                dataType: "json"
             }).done(function(data) {
+                // data = JSON.parse(data)
                 $.each(data, function(i,v){
-                    var date = v.year + '/' + v.month + '/' + v.day
+                    var date = new Date(v.year+"/"+v.month+"/"+v.day)
+                    var date1 = new Date(v.year,v.month,v.day)
+                    var date2 = new Date(v.year,v.month)
+                    var date_f = date.getFullYear() + "年" + (date.getMonth()+1) + "月" + date.getDate() + "日"
 
                     var a = '<a href="https://localhost:10443/sample/index.php/Hello/calendar?year='+v.year+'&month='+v.month+'">link</a>'
-                    var tr = '<tr><td>'+date+''+'</td> <td>'+v.text+'</td><td>'+a+'</td></tr>'
+                    var tr = '<tr><td>'+date_f+''+'</td> <td>'+v.text+'</td><td>'+a+'</td></tr>'
                     
                     $('#search_result').append(tr)
                     
@@ -306,7 +310,9 @@
     <tbody>
     <?php
     $day = 1;
-    $today = date("d");
+    $today = date("Y-n");
+    $today1 = date("d");
+    $this_month = strtotime($today) == strtotime("$year-$month");
     ?>
 
 <?php
@@ -327,7 +333,7 @@ for($i=0; $i<$total_week; $i++){
                     <?php else : ?>
                         <span style="color:black"><?php echo $day ?></span>
                     <?php endif ?>
-                    <?php if($today == $day) : ?>
+                    <?php if(($today1 == $day) && ($this_month)) : ?>
                         <span style="color:red" id="today_highlight">本日</span>
                     <?php endif ?>
                 <input type="checkbox" data-weekday="<?php echo $day_week ?>" class="chk" name="check_test" value="<?php echo $day ?>">

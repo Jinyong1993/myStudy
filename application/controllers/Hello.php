@@ -42,7 +42,7 @@ class Hello extends CI_Controller {
 	public function calendar()
 	{
 		$year = $this->input->get("year") ?: date('Y');
-		$month = $this->input->get("month") ?: date('m');
+		$month = $this->input->get("month") ?: date('n');
 		
 		$arr = array();
 
@@ -55,7 +55,8 @@ class Hello extends CI_Controller {
 		
 		$search = !empty($_GET['search']);
 
-		$first_date = "$year-$month-01";
+		$day = 1;
+		$first_date = "$year-$month-$day";
 		$time = strtotime($first_date);
 		$start = date('w', $time);
 		$total_day = date('t', $time);
@@ -157,11 +158,12 @@ class Hello extends CI_Controller {
 
 		$text = $this->input->get('text');
 
+		// select省略可
 		$this->db->from('calendar');
 		$this->db->like('text', $text);
+		$this->db->where('user_id', $user_id);
 		$query = $this->db->get();
 		$result = $query->result();
-
 
 		echo json_encode($result);
 	}
