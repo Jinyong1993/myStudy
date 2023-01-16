@@ -22,25 +22,12 @@ class Login extends CI_Controller {
         $account = $this->input->post('account');
         $password = $this->input->post('password');
 
-        $this->db->select('password, user_id');
-        $this->db->from('user');
-        $this->db->where('account', $account);
-        $query = $this->db->get();
-        $password_hash = $query->first_row();
-
-        if(!isset($password_hash))
-        {
-            redirect("https://localhost:10443/sample/index.php/Login/index");
-        }
-        
-        $is_match = password_verify($password, $password_hash->password);
-        
-        if($is_match)
-        {
-            $this->session->set_userdata('user_id', $password_hash->user_id);
-            redirect("https://localhost:10443/sample/index.php/Hello/calendar");
-
-        } else {
+        $login_success = $this->login_validate($password, $account);
+		if(!empty($login_success)){
+			$this->load->helper('url');
+            $this->session->set_userdata('user_id', $login_success->user_id);
+			redirect("https://localhost:10443/sample/index.php/Hello/calendar");
+		} else {
             redirect("https://localhost:10443/sample/index.php/Login/index");
         }
     }
@@ -131,6 +118,107 @@ class Login extends CI_Controller {
         // }
 
         
+    }
+
+    public function user_info()
+    {
+        $this->load->library('session');
+        $user_id = $this->session->userdata('user_id');
+        var_dump($user_id);
+
+        $this->load->database();
+        $this->db->from('user');
+        $this->db->where('user_id',$user_id);
+        $query = $this->db->get();
+        $result = $query->first_row();
+
+        var_dump($result);
+
+        $user_info = array(
+            'result' => $result,
+        );
+
+        $this->load->view('user_info_view.php', $user_info);
+    }
+
+    public function user_info_proc()
+    {
+        $this->load->library('session');
+        $user_id = $this->session->userdata('user_id');
+        
+        $password = $this->input->post('password');
+        $password_change = $this->input->post('password_change');
+        $email_change = $this->input->post('email_change');
+        
+        $password_validate = $this->login_validate($password, null, $user_id);
+		if(!$password_validate){
+            $err_message = "パスワードを確認して下さい。";
+            $this->session->set_userdata('validate', $validate);
+            redirect("https://localhost:10443/sample/index.php/Login/user_info");
+		}
+        
+        $this->form_validation->set_rules('password_change', 'パスワード', 'min_length[4]');
+        $this->form_validation->set_rules('password_change_confirm', 'パスワード', 'matches[password_change]');
+        $this->form_validation->set_rules('email_change', 'メール', 'valid_email|is_unique[user.email]');
+        $this->form_validation->set_rules('email_change_confirm', 'メール', 'matches[email_change]');
+        
+        if ($this->form_validation->run() == FALSE){
+            $validate = validation_errors();
+            $this->session->set_userdata('validate', $validate);
+            redirect("https://localhost:10443/sample/index.php/Login/user_info");
+        } else {
+            
+            $this->load->database();
+            // 이거 안먹힘
+            if(isset($password_change))
+            {
+                $password_hash = password_hash($password_change, PASSWORD_DEFAULT);
+                $this->db->set('password', $password_hash);
+            }
+
+            if(isset($email_change)) {
+                $this->db->set('email', $email_change);
+            }
+
+            $this->db->where('user_id', $user_id);
+            $this->db->update('user');
+
+            $success = true;
+            $this->session->set_userdata('success', $success);
+
+            redirect("https://localhost:10443/sample/index.php/Login/user_info");
+        }
+    }
+    
+    public function login_validate($password, $account=null, $user_id=null)
+    {
+        if(isset($account))
+        {
+            $this->db->where('account', $account);
+        } elseif(isset($user_id)) {
+            $this->db->where('user_id', $user_id);
+        } else {
+            return false;
+        }
+
+        $this->db->select('password, user_id');
+        $this->db->from('user');
+        $query = $this->db->get();
+        $password_hash = $query->first_row();
+
+        if(!isset($password_hash))
+        {
+            return false;
+        }
+        
+        $is_match = password_verify($password, $password_hash->password);
+        
+        if($is_match)
+        {
+            return $password_hash;
+        } else {
+            return false;
+        } 
     }
 
     // function special_check($str)

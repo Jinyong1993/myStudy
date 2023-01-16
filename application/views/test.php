@@ -218,7 +218,7 @@
 
 
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Link</a></li>
+        <li><a class="glyphicon glyphicon-user" href="https://localhost:10443/sample/index.php/Login/user_info"> 会員情報</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -387,7 +387,7 @@ for($i=0; $i<$total_week; $i++){
         <div class="text_input_group">
             <label for="text_search" class="control-label">検索したいテキストを入力して下さい。</label>
             <input type="text" class="form-control" id="text_search">
-            <button class="btn btn-default" id="text_search_input">入力</button>
+            <button class="btn btn-default" id="text_search_input"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 入力</button>
         </div>
         <div class="output_group">
             <table class="table table-bordered">
