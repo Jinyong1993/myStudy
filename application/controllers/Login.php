@@ -26,6 +26,16 @@ class Login extends CI_Controller {
 		if(!empty($login_success)){
 			$this->load->helper('url');
             $this->session->set_userdata('user_id', $login_success->user_id);
+
+            // ログインできたら、名前をすでに表示させるため
+            $user_id = $this->session->userdata('user_id');
+            $this->load->database();
+            $this->db->from('user');
+            $this->db->where('user_id',$user_id);
+            $query = $this->db->get();
+            $result = $query->first_row();
+            $this->session->set_userdata('name', $result->name);
+
 			redirect("https://localhost:10443/sample/index.php/Hello/calendar");
 		} else {
             redirect("https://localhost:10443/sample/index.php/Login/index");
@@ -197,6 +207,7 @@ class Login extends CI_Controller {
 
             $success = true;
             $this->session->set_userdata('success', $success);
+            $this->session->set_userdata('name', $name);
 
             redirect("https://localhost:10443/sample/index.php/Login/user_info");
         }

@@ -216,9 +216,11 @@
         <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Login/logout">ログアウト</a>
       </form>
 
+      <?php if($this->session->userdata('user_id')) : ?>
       <div class="nav navbar-nav navbar-left">
-        
+        <h3><?php echo $this->session->userdata('name') ?></h3>
       </div>
+      <?php endif ?>
 
      <ul class="nav navbar-nav navbar-right">
         <li><a class="glyphicon glyphicon-user" href="https://localhost:10443/sample/index.php/Login/user_info"> 会員情報</a></li>
@@ -415,18 +417,6 @@ for($i=0; $i<$total_week; $i++){
     </div>
   </div>
 </div>
-
-<address>
-  <strong>株式会社アイビーシステム</strong><br>
-  新潟県新潟市北区すみれ野2-1-12<br>
-  <abbr title="Phone">TEL</abbr> 025-257-3050<br>
-  <abbr title="Fax">FAX</abbr> 025-257-3060
-</address>
-
-<address>
-  <strong>ジョンジンヨン</strong><br>
-  <a href="mailto:#">jeong-jin-young@ib-system.co.jp</a>
-</address>
 </form>
 </body>
 </html>

@@ -225,7 +225,7 @@ class Hello extends CI_Controller {
 
 	// 	echo $result;
 	// }
-
+	
 	private function validate($year, $month){
 		if(!is_numeric($year) || !is_numeric($month) || ($year > 9999 || $month > 12) || ($year < 1 || $month < 1)){
 			return true;
