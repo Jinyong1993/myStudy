@@ -21,7 +21,11 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="2"><input type="submit" value="次へ"><a href="https://localhost:10443/sample/index.php/Login/regis">会員登録</a></td>
+                <td colspan="2">
+                    <input type="submit" value="次へ">
+                    <a href="https://localhost:10443/sample/index.php/Login/regis">会員登録</a>
+                    <a href="https://localhost:10443/sample/index.php/SendingMail/index">パスワードを忘れた時</a>
+                </td>
             </tr>
         </tfoot>
     </table>

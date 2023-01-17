@@ -54,4 +54,4 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 $route['item'] = "item/index";
 $route['itemForm'] = "item/itemForm";
-$route['email'] = 'SendingMail';
+$route['email'] = 'SendingMail'; // メール
