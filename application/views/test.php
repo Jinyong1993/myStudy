@@ -216,8 +216,11 @@
         <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Login/logout">ログアウト</a>
       </form>
 
+      <div class="nav navbar-nav navbar-left">
+        
+      </div>
 
-      <ul class="nav navbar-nav navbar-right">
+     <ul class="nav navbar-nav navbar-right">
         <li><a class="glyphicon glyphicon-user" href="https://localhost:10443/sample/index.php/Login/user_info"> 会員情報</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
