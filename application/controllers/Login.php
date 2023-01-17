@@ -75,7 +75,7 @@ class Login extends CI_Controller {
         $this->form_validation->set_rules('confirm_password', 'パスワード', 'required|matches[password]');
         $this->form_validation->set_rules('name', '名前', 'required');
         $this->form_validation->set_rules('age', '年齢', 'required|numeric');
-        $this->form_validation->set_rules('gender', '性別', 'required');
+        $this->form_validation->set_rules('gender', '性別', 'required|in_list[男,女]');
         $this->form_validation->set_rules('email', 'メール', 'required|valid_email|is_unique[user.email]');
 
         if ($this->form_validation->run() == FALSE){
@@ -124,15 +124,12 @@ class Login extends CI_Controller {
     {
         $this->load->library('session');
         $user_id = $this->session->userdata('user_id');
-        var_dump($user_id);
 
         $this->load->database();
         $this->db->from('user');
         $this->db->where('user_id',$user_id);
         $query = $this->db->get();
         $result = $query->first_row();
-
-        var_dump($result);
 
         $user_info = array(
             'result' => $result,
@@ -145,40 +142,55 @@ class Login extends CI_Controller {
     {
         $this->load->library('session');
         $user_id = $this->session->userdata('user_id');
-        
+
         $password = $this->input->post('password');
+        $name = $this->input->post('name');
+        $age = $this->input->post('age');
+        $gender = $this->input->post('gender');
         $password_change = $this->input->post('password_change');
         $email_change = $this->input->post('email_change');
-        
+
         $password_validate = $this->login_validate($password, null, $user_id);
+
 		if(!$password_validate){
-            $err_message = "パスワードを確認して下さい。";
-            $this->session->set_userdata('validate', $validate);
+            $err_message = "パスワードは必須です。";
+            $this->session->set_userdata('err_message', $err_message);
             redirect("https://localhost:10443/sample/index.php/Login/user_info");
 		}
-        
+
+        // 両方とも、空の時
+        if(empty($password_change) && empty($email_change)) {
+            $err_message = "処理できません。パスワード変更欄又は、メール変更欄に入力は必須です。";
+            $this->session->set_userdata('err_message', $err_message);
+            redirect("https://localhost:10443/sample/index.php/Login/user_info");
+        }
+
+        // $this->form_validation->set_rules('password', 'パスワード', 'required|min_length[4]');
         $this->form_validation->set_rules('password_change', 'パスワード', 'min_length[4]');
         $this->form_validation->set_rules('password_change_confirm', 'パスワード', 'matches[password_change]');
         $this->form_validation->set_rules('email_change', 'メール', 'valid_email|is_unique[user.email]');
         $this->form_validation->set_rules('email_change_confirm', 'メール', 'matches[email_change]');
+        $this->form_validation->set_rules('name', '名前', 'required');
+        $this->form_validation->set_rules('age', '年齢', 'required|numeric');
+        $this->form_validation->set_rules('gender', '性別', 'required');
         
         if ($this->form_validation->run() == FALSE){
             $validate = validation_errors();
             $this->session->set_userdata('validate', $validate);
             redirect("https://localhost:10443/sample/index.php/Login/user_info");
         } else {
-            
-            $this->load->database();
-            // 이거 안먹힘
-            if(isset($password_change))
+            if(!empty($password_change))
             {
                 $password_hash = password_hash($password_change, PASSWORD_DEFAULT);
                 $this->db->set('password', $password_hash);
             }
 
-            if(isset($email_change)) {
+            if(!empty($email_change)) {
                 $this->db->set('email', $email_change);
-            }
+            } 
+            $this->db->set('name', $name);
+            $this->db->set('age', $age);
+            $this->db->set('gender', $gender);
 
             $this->db->where('user_id', $user_id);
             $this->db->update('user');

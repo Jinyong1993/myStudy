@@ -16,6 +16,14 @@
         ?>
         </div>
     <?php endif ?>
+    <?php if($this->session->userdata('err_message')) : ?>
+        <div class="alert alert-danger print-error-msg">
+        <?php 
+        echo $this->session->userdata('err_message'); 
+        $this->session->unset_userdata('err_message');
+        ?>
+        </div>
+    <?php endif ?>
     <?php if($this->session->userdata('success')) : ?>
         <div class="alert alert-success print-error-msg">
             処理しました。
@@ -28,7 +36,7 @@
      <table class="table">
          <thead>
             <tr>
-                <th>会員情報</th>
+                <th class="glyphicon glyphicon-user">会員情報</th>
             </tr>
         </thead>
         <tbody>
@@ -50,22 +58,22 @@
             </tr>
             <tr>
                 <td>名前</td>
-                <td><input class="form-control" name="name" type="text" placeholder="名前を入力してください" value="<?php echo isset($result->name) ? $result->name : "" ?>" disabled></td>
+                <td><input class="form-control" name="name" type="text" placeholder="名前を入力してください" value="<?php echo isset($result->name) ? $result->name : "" ?>"></td>
             </tr>
             <tr>
                 <td>年齢</td>
-                <td><input class="form-control" name="age" type="text" placeholder="年齢を入力してください" value="<?php echo isset($result->age) ? $result->age : "" ?>" disabled></td>
+                <td><input class="form-control" name="age" type="text" placeholder="年齢を入力してください" value="<?php echo isset($result->age) ? $result->age : "" ?>"></td>
             </tr>
             <tr>
                 <td>性別</td>
                 <td>
-                    <label><input class="" name="gender" type="radio" value="男" disabled <?php echo isset($result->gender) && $result->gender == "男" ? "checked" : "" ?>>男</label>
-                    <label><input class="" name="gender" type="radio" value="女" disabled <?php echo isset($result->gender) && $result->gender == "女" ? "checked" : "" ?>>女</label>
+                    <label><input class="" name="gender" type="radio" value="男" <?php echo isset($result->gender) && $result->gender == "男" ? "checked" : "" ?>>男</label>
+                    <label><input class="" name="gender" type="radio" value="女" <?php echo isset($result->gender) && $result->gender == "女" ? "checked" : "" ?>>女</label>
                 </td>
             </tr>
             <tr>
                 <td>メール</td>
-                <td><?php echo isset($result->email) ? $result->email : "" ?></td>
+                <td style="color:grey"><?php echo isset($result->email) ? $result->email : "" ?></td>
             </tr>
             <tr>
                 <td>メール変更</td>
