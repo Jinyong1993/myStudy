@@ -218,7 +218,7 @@
 
       <?php if($this->session->userdata('user_id')) : ?>
       <div class="nav navbar-nav navbar-left">
-        <h3><?php echo $this->session->userdata('name') ?></h3>
+        <h3><?php echo $this->session->userdata('name') ?> 様</h3>
       </div>
       <?php endif ?>
 

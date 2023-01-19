@@ -1,14 +1,27 @@
 <html>
 <head>    
-    <title> Send Email Codeigniter </title>
+    <title>パスワードを探す</title>
     <?php $this->load->view('header.php'); ?>
 </head>
 <body>
-
+<?php if($this->session->flashdata('time_over')) : ?>
+    <div class="alert alert-danger print-error-msg">
+        <?php 
+        echo $this->session->flashdata('time_over');
+        ?>
+    </div>
+<?php endif ?>
 <?php if($this->session->flashdata('error')) : ?>
     <div class="alert alert-danger print-error-msg">
         <?php 
         echo $this->session->flashdata('error');
+        ?>
+    </div>
+<?php endif ?>
+<?php if($this->session->flashdata('email_sent_success')) : ?>
+    <div class="alert alert-success">
+        <?php 
+        echo $this->session->flashdata('email_sent_success');
         ?>
     </div>
 <?php endif ?>
@@ -38,7 +51,7 @@ echo form_open('https://localhost:10443/sample/index.php/SendingMail/send_mail')
         </tr>
          <tr>
             <td colspan="2">
-                <input type="submit" value="メール送信">
+                <input class="btn btn-success" type="submit" value="メール送信">
                 <a href="https://localhost:10443/sample/index.php/Login/index">ログインページへ</a>
             </td>
         </tr>
