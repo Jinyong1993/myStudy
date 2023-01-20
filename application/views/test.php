@@ -86,6 +86,8 @@
         $(".plus_button").click(function (){
 			var plus_position = $(this).closest('td').find(':checkbox[name=check_test]').val()
 			
+            $("#plus_title").val(null)
+            $("#plus_textarea").val(null)
             $("#plus_save").off('click')
             
             $("#plus_save").click(function (){
@@ -112,7 +114,72 @@
             });
         });
 
-        
+        $(".title").click(function(){
+			var day = $(this).closest('td').find(':checkbox[name=check_test]').val()
+            var id = $(this).data("id")
+
+            var id_object = {
+                id:$(this).data("id")
+            }
+            
+            $.ajax({
+                url: "title_ajax_controller",
+                type: "get",
+                data: id_object,
+                dataType: "json"
+            }).done(function(data) {
+                $("#plus_title").val(data.title);
+                $("#plus_textarea").val(data.text);
+            })
+            
+            $("#plus_save").off('click')
+            $("#plus_delete").off('click')
+            $("#plus_save").click(function (){
+                var plus_object = {
+                    id:id,
+                    year:$("#year_ajax").val(),
+                    month:$("#month_ajax").val(),
+                    day:day,
+                    title:$("#plus_title").val(),
+                    text:$("#plus_textarea").val(),
+                }
+
+                $.ajax({
+                    url: "plus_ajax_controller",
+                    type: "post",
+                    data: plus_object,
+                    dataType: "json"
+                }).done(function(data) {
+                    if(data.success){
+                        location.reload()
+                    } else {
+                        alert(data.error)
+                    }
+                })
+            });
+
+            $("#plus_delete").click(function(){
+                var plus_object = {
+                    id:id,
+                    year:$("#year_ajax").val(),
+                    month:$("#month_ajax").val(),
+                    day:day,
+                    title:$("#plus_title").val(),
+                    text:$("#plus_textarea").val(),
+                }
+                console.log(plus_object)
+
+                $.ajax({
+                    url: "delete_ajax",
+                    type: "post",
+                    data: plus_object,
+                    dataType: "json"
+                }).done(function(data) {
+                    location.reload()
+                    alert("処理しました。")
+                })
+            });
+        });
 
         $("#text_search_input").click(function() {
             $("#text_search").val();
@@ -128,9 +195,8 @@
                 url: "search_ajax_controller",
                 type: "get",
                 data: text_object,
-                dataType: "json"
+                dataType: "json" // data = JSON.parse(data)
             }).done(function(data) {
-                // data = JSON.parse(data)
                 $.each(data, function(i,v){
                     var date = new Date(v.year+"/"+v.month+"/"+v.day)
                     var date1 = new Date(v.year,v.month,v.day)
@@ -147,7 +213,37 @@
 
         });
 
+        $("#chk_plus").click(function(){
+            var days = []
+            $(':checkbox[name="check_test"]:checked').each(function () {
+                days.push($(this).val());
+            });
+            console.log(days);
 
+            
+            $("#plus_save").off('click')
+            $("#plus_save").click(function (){
+                var plus_object = {
+                    year:$("#year_ajax").val(),
+                    month:$("#month_ajax").val(),
+                    day:days,
+                    title:$("#plus_title").val(),
+                    text:$("#plus_textarea").val(),
+                }
+                $.ajax({
+                    url: "plus_ajax_controller",
+                    type: "post",
+                    data: plus_object,
+                    dataType: "json"
+                }).done(function(data) {
+                    if(data.success){
+                        location.reload()
+                    } else {
+                        alert(data.error)
+                    }
+                })
+            });
+        });
 
     });
 </script>
@@ -294,7 +390,7 @@ for($i=0; $i<$total_week; $i++){
 				<?php foreach($result as $row) : ?>
 				<div>
 					<?php if(!empty($row->title)) : ?>
-					<input type="button" class="title" value="<?php echo $row->title ?>"/>
+					<input type="button" class="title" data-id="<?php echo $row->id ?>" value="<?php echo $row->title ?>" data-bs-toggle="modal" data-bs-target=".plus"/>
 					<?php endif ?>
 				</div>
 				<?php endforeach ?>
@@ -320,9 +416,12 @@ for($i=0; $i<$total_week; $i++){
         
     </tfoot>
 </table>
-     <input type="checkbox" id="check_all"/>
-	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@fat">検索</button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#calendar_search" data-bs-whatever="@fat">検索</button>
+    <input type="checkbox" id="check_all"/>
+	<button type="button" id="chk_plus" class="btn btn-success" data-bs-toggle="modal" data-bs-target=".plus">追加</button>
+	<button type="button" id="del" class="btn btn-danger">削除</button>
+
+	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">検索</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#calendar_search">検索</button>
 </form>
 
 
@@ -337,10 +436,11 @@ for($i=0; $i<$total_week; $i++){
 
 			<div class="modal-body">
 				<div>
-					<input type="text" id="plus_title"/>
+                    タイトル<br>
+					<input type="text" id="plus_title" value=""/>
 				</div>
 				<div>
-					<textarea id="plus_textarea">ds</textarea>
+					<textarea id="plus_textarea"></textarea>
 				</div>
 			</div>
 

@@ -84,7 +84,7 @@ class Hello extends CI_Controller {
 		$arr = array();
 
 		$this->load->database();
-		$this->db->select('user_id, year, month, day, title, text, color');
+		$this->db->select('id, user_id, year, month, day, title, text, color');
 		$this->db->from('calendar');
 		$this->db->where('user_id', $user_id);
 		$this->db->where('year', $year);
@@ -168,16 +168,34 @@ class Hello extends CI_Controller {
 		echo json_encode($result);
 	}
 
-	public function plus_ajax_controller(){
-		$this->load->library('session');
+	public function title_ajax_controller(){
 		$user_id = $this->session->userdata('user_id');
+		$id = $this->input->get('id');
 
+		$this->db->from('calendar');
+		$this->db->where('user_id', $user_id);
+		$this->db->where('id', $id);
+		$query = $this->db->get();
+		$result = $query->first_row();
+		echo json_encode($result);
+
+	}
+
+	public function plus_ajax_controller(){
+		$user_id = $this->session->userdata('user_id');
+		$id = $this->input->post('id');
 		$year = $this->input->post('year');
 		$month = $this->input->post('month');
 		$day = $this->input->post('day');
 		$title = $this->input->post('title');
 		$text = $this->input->post('text');
 		$color = $this->input->post('color');
+
+		$this->db->from('calendar');
+		$this->db->where('user_id', $user_id);
+		$this->db->where('id', $id);
+		$query = $this->db->get();
+		$result = $query->first_row();
 
 		$response = array(
 			"success" => true
@@ -198,34 +216,87 @@ class Hello extends CI_Controller {
 			echo json_encode($response);
 			return;
 		}
-		
-		$plus_data = array(
-			'user_id' => $user_id,
-			'year' => $year,
-			'month' => $month,
-			'day' => $day,
-			'title' => $title,
-			'text' => $text,
-			'color' => $color,
-		);
-		$this->load->database();
-		$this->db->insert('calendar', $plus_data);
+
+		if(is_array($day)){
+			foreach($day as $d){
+				$plus_data = array(
+					'user_id' => $user_id,
+					'year' => $year,
+					'month' => $month,
+					'day' => $d,
+					'title' => $title,
+					'text' => $text,
+					'color' => $color,
+				);
+				if(isset($result)){
+					$this->db->set('title', $title);
+					$this->db->set('text', $text);
+					$this->db->where('user_id', $user_id);
+					$this->db->where('id', $id);
+					$this->db->update('calendar');
+				} else {
+					$this->db->insert('calendar', $plus_data);
+				}
+			}
+		} elseif(isset($result)) {
+			$plus_data = array(
+				'user_id' => $user_id,
+				'year' => $year,
+				'month' => $month,
+				'day' => $day,
+				'title' => $title,
+				'text' => $text,
+				'color' => $color,
+			);
+			$this->db->set('title', $title);
+			$this->db->set('text', $text);
+			$this->db->where('user_id', $user_id);
+			$this->db->where('id', $id);
+			$this->db->update('calendar');
+		} else {
+			$plus_data = array(
+				'user_id' => $user_id,
+				'year' => $year,
+				'month' => $month,
+				'day' => $day,
+				'title' => $title,
+				'text' => $text,
+				'color' => $color,
+			);
+			if(isset($result)){
+				$this->db->set('title', $title);
+				$this->db->set('text', $text);
+				$this->db->where('user_id', $user_id);
+				$this->db->where('id', $id);
+				$this->db->update('calendar');
+			} else {
+				$this->db->insert('calendar', $plus_data);
+			}
+		}
+
 		echo json_encode($response);
 	}
 
-	// public function ajax_test() {
-	// 	$data = array();
-	// 	$this->load->view('ajax_view_test', $data);
-	// }
+	public function delete_ajax(){
+		$user_id = $this->session->userdata('user_id');
+		$id = $this->input->post('id');
+		$year = $this->input->post('year');
+		$month = $this->input->post('month');
+		$day = $this->input->post('day');
+		$title = $this->input->post('title');
+		$text = $this->input->post('text');
 
-	// public function ajax_controller(){
-	// 	$number1 = $_POST['number1'];
-	// 	$number2 = $_POST['number2'];
+		$this->db->from('calendar');
+		$this->db->where('user_id', $user_id)
+				 ->where('id', $id);
+		$this->db->delete('calendar');
 
-	// 	$result = $number1 + $number2;
+		$response = array(
+			"success" => true
+		);
 
-	// 	echo $result;
-	// }
+		echo json_encode($response);
+	}
 	
 	private function validate($year, $month){
 		if(!is_numeric($year) || !is_numeric($month) || ($year > 9999 || $month > 12) || ($year < 1 || $month < 1)){
