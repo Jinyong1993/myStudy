@@ -7,6 +7,7 @@ class Hello extends CI_Controller {
 		parent::__construct();
 		$this->load->database();
         $this->load->library('session');
+		$this->load->library('form_validation');
 		$this->load->helper('url');
 
 		$user_id = $this->session->userdata('user_id');
@@ -83,7 +84,7 @@ class Hello extends CI_Controller {
 		$arr = array();
 
 		$this->load->database();
-		$this->db->select('user_id, year, month, day, text, color');
+		$this->db->select('user_id, year, month, day, title, text, color');
 		$this->db->from('calendar');
 		$this->db->where('user_id', $user_id);
 		$this->db->where('year', $year);
@@ -91,8 +92,7 @@ class Hello extends CI_Controller {
 		$query = $this->db->get();
 
 		foreach($query->result() as $row){
-			$arr[$row->day] = $row;
-			// var_dump($row->text);
+			$arr[$row->day][] = $row;
 		}
 		return $arr;
 	}
@@ -168,48 +168,49 @@ class Hello extends CI_Controller {
 		echo json_encode($result);
 	}
 
-	public function calendar_ajax_controller(){
+	public function plus_ajax_controller(){
 		$this->load->library('session');
 		$user_id = $this->session->userdata('user_id');
 
 		$year = $this->input->post('year');
 		$month = $this->input->post('month');
 		$day = $this->input->post('day');
+		$title = $this->input->post('title');
 		$text = $this->input->post('text');
 		$color = $this->input->post('color');
 
-		$isError = $this->validate($year, $month);
-		if($isError){
-			$this->load->helper('url');
-			echo "エラー";
+		$response = array(
+			"success" => true
+		);
+		
+		$this->form_validation->set_rules('title', 'タイトル', 'required');
+		if ($this->form_validation->run() == FALSE){
+			$response["success"] = false;
+			$response["error"] = validation_errors();
+			echo json_encode($response);
 			return;
 		}
-		// log_message('debug', $text);
+
+		$isError = $this->validate($year, $month);
+		if($isError){
+			$response["success"] = false;
+			$response["error"] = "エラー";
+			echo json_encode($response);
+			return;
+		}
 		
-		$search_data = array(
+		$plus_data = array(
 			'user_id' => $user_id,
 			'year' => $year,
 			'month' => $month,
 			'day' => $day,
+			'title' => $title,
 			'text' => $text,
 			'color' => $color,
 		);
-
-		$select = $this->select($year, $month);
 		$this->load->database();
-
-		if(isset($select[$day])){
-			$this->db->set('text', $text);
-			$this->db->set('color', $color);
-			$this->db->where('user_id', $user_id);
-			$this->db->where('year', $year);
-			$this->db->where('month', $month);
-			$this->db->where('day', $day);
-			$this->db->update('calendar');
-		} else {
-			$this->db->insert('calendar', $data);
-		}
-		echo "処理しました。";
+		$this->db->insert('calendar', $plus_data);
+		echo json_encode($response);
 	}
 
 	// public function ajax_test() {

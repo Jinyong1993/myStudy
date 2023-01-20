@@ -83,30 +83,36 @@
             borderWidth:3
         },5000);
 
-        $(".set_color").click(function (){
-            $("#year_ajax").val();
-            $("#month_ajax").val();
-            $(this).parent("td").children(":checkbox[name=check_test]").val();
-            $(this).parent("td").children("textarea").val();
-            $(this).parent("td").children(".color_change").val();
+        $(".plus_button").click(function (){
+			var plus_position = $(this).closest('td').find(':checkbox[name=check_test]').val()
+			
+            $("#plus_save").off('click')
+            
+            $("#plus_save").click(function (){
+                var plus_object = {
+                    year:$("#year_ajax").val(),
+                    month:$("#month_ajax").val(),
+                    day:plus_position,
+                    title:$("#plus_title").val(),
+                    text:$("#plus_textarea").val(),
+                }
 
-            var ajax_data = {
-                year:$("#year_ajax").val(),
-                month:$("#month_ajax").val(),
-                day:$(this).parent("td").children(":checkbox[name=check_test]").val(),
-                text:$(this).parent("td").children("textarea").val(),
-                color:$(this).parent("td").children(".color_change").val()
-            }
-
-            $.ajax({
-                url: "calendar_ajax_controller",
-                type: "post",
-                data: ajax_data,
-            }).done(function(data) {
-                alert(data);
+                $.ajax({
+                    url: "plus_ajax_controller",
+                    type: "post",
+                    data: plus_object,
+                    dataType: "json"
+                }).done(function(data) {
+                    if(data.success){
+                        location.reload()
+                    } else {
+                        alert(data.error)
+                    }
+                })
             });
-
         });
+
+        
 
         $("#text_search_input").click(function() {
             $("#text_search").val();
@@ -164,137 +170,73 @@
 
 <body>
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar">1</span>
-        <span class="icon-bar">2</span>
-        <span class="icon-bar">3</span>
-      </button>
-      <a class="navbar-brand" href="https://localhost:10443/sample/index.php/Hello/calendar">カレンダー</a>
-    </div>
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Link <span class="sr-only"></span></a></li>
-        <li><a href="#">Link</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">One more separated link</a></li>
-          </ul>
-        </li>
-      </ul>
-
-
-      <form class="navbar-form navbar-left" method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
-        <?php if($month == 1) : ?>
-        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12" role="button">先月</a>
-        <?php else : ?>
-            <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month-1?>">先月</a>
-        <?php endif ?>
-        <?php if($month == 12) : ?>
-            <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year+1) ?>&month=1">来月</a>
-        <?php else : ?>
-            <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">来月</a>
-        <?php endif ?>
-        <div id="y_m_search" class="form-group">
-          <input type="text" id="year_search" name="year" value="<?php echo $year ?>" class="date form-control" placeholder="年" autocomplete="off">
-          <input type="text" id="month_search" name="month" value="<?php echo $month ?>" class="date form-control" placeholder="月" autocomplete="off">
-        </div>
-        <button type="submit" id="search" class="btn btn-default">検索</button>
-        <a class="btn btn-default btn-xs" href="https://localhost:10443/sample/index.php/Login/logout">ログアウト</a>
-      </form>
-
-      <?php if($this->session->userdata('user_id')) : ?>
-      <div class="nav navbar-nav navbar-left">
-        <h3><?php echo $this->session->userdata('name') ?> 様</h3>
-      </div>
-      <?php endif ?>
-
-     <ul class="nav navbar-nav navbar-right">
-        <li><a class="glyphicon glyphicon-user" href="https://localhost:10443/sample/index.php/Login/user_info"> 会員情報</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  	<div class="container-fluid">
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<a class="navbar-brand" href="https://localhost:10443/sample/index.php/Hello/calendar#">カレンダー</a>
+		<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<li class="nav-item">
+				<a class="nav-link active" aria-current="page" href="#">Home</a>
+				</li>
+				<li class="nav-item">
+				<a class="nav-link" href="#">Link</a>
+				</li>
+				<li class="nav-item">
+				<a class="nav-link disabled">Disabled</a>
+				</li>
+			</ul>
+		</div>
+		<form class="navbar-form navbar-left row" method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
+			<div class="col-auto">
+			<?php if($month == 1) : ?>
+				<a class="btn btn-secondary btn-sm" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12" role="button">先月</a>
+			<?php else : ?>
+				<a class="btn btn-secondary btn-sm" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month-1?>">先月</a>
+			<?php endif ?>
+			</div>
+			<div class="col-auto">
+			<?php if($month == 12) : ?>
+				<a class="btn btn-secondary btn-sm" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year+1) ?>&month=1">来月</a>
+			<?php else : ?>
+				<a class="btn btn-secondary btn-sm" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".$year ?>&month=<?php echo $month+1 ?>">来月</a>
+			<?php endif ?>
+			</div>
+			<div class="col-auto">
+				<input type="text" id="year_search" name="year" value="<?php echo $year ?>" class="date form-control form-control-sm" placeholder="年" autocomplete="off">
+			</div>
+			<div class="col-auto">
+				<input type="text" id="month_search" name="month" value="<?php echo $month ?>" class="date form-control form-control-sm" placeholder="月" autocomplete="off">
+			</div>
+			<div class="col-auto">
+				<button type="submit" id="search" class="btn btn-secondary btn-sm">検索</button>
+			</div>
+			<div class="col-auto">
+				<?php if($this->session->userdata('user_id')) : ?>
+				<div class="nav navbar-nav navbar-left">
+				  <h3><?php echo $this->session->userdata('name') ?> 様</h3>
+				</div>
+				<?php endif ?>
+			</div>
+			<div class="col-auto">
+				<a class="btn btn-danger btn-sm" href="https://localhost:10443/sample/index.php/Login/logout">ログアウト</a>
+			</div>
+			<div class="col-auto">
+			<a class="btn btn-info btn-sm" href="https://localhost:10443/sample/index.php/Login/user_info"> 会員情報</a>
+			</div>
+		</form>
+	</div>
 </nav>
 
-
-<div id="alert_message" class="alert alert-warning alert-dismissible" role="alert" style="display:none">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>エラー</strong>
-</div>
 <form method="POST" action="https://localhost:10443/sample/index.php/Hello/insert">
-    <input type="hidden" id="year_ajax" name="year" value="<?php echo $year ?>"><input type="hidden" id="month_ajax" name="month" value="<?php echo $month ?>">
-
-<?php if(!$isError) : ?>
-<!--
-<table name="table">
-    <tr>
-        <td>날짜</td>
-        <td>요일</td>
-        <td>빈칸</td>
-    </tr>
-    <?php
-    $sec = 86400;
-    for($i=1; $i<$total_day + 1; $i++):
-    ?>
-    <tr>
-        <td>
-            <?= date("Y/m/d", $time); ?>
-            <?php $day = (int) date('d', $time) ?>
-        </td>
-        <td>
-            <?= date('D', $time) ?>
-        </td>
-        <td>
-            <?php 
-            if(isset($select[$day]))
-            {
-                $text = $select[$day];
-            }
-            else
-            {
-                $text = '';
-            }
-            ?>
-            <input name="text_save[]" value="<?=$text?>"/>
-        </td>
-    </tr>
-    <?php
-    $time += $sec;
-    endfor
-    ?>
-</table>
-<?php endif ?> 
--->
-
+    <input type="text" id="year_ajax" name="year" value="<?php echo $year ?>"><input type="text" id="month_ajax" name="month" value="<?php echo $month ?>">
 
 <table class="table table-condensed">
     <?php
     $first = "$year/$month/1";
     $time_stamp = strtotime($first);
-    // $last = strtotime(date("Y/m/t", $time_stamp));
     $total_day = date("t", $time_stamp);
 
     $start_day_week = (int) date("w", $time_stamp);
@@ -330,7 +272,8 @@ for($i=0; $i<$total_week; $i++){
         $result = isset($select[$day]) ? $select[$day] : null;
     ?>
         <?php if (($day > 1 || $j >= $start_day_week) && ($total_day >= $day)) : ?>
-            <td style="background:<?php echo isset($result->color) ? $result->color : "white" ?>">
+            <td>
+				<div class="d-flex align-items-center">
                     <?php if($day_week == "Sunday") : ?>
                         <span style="color:red"><?php echo $day ?></span>
                     <?php elseif($day_week == "Saturday") : ?>
@@ -341,11 +284,20 @@ for($i=0; $i<$total_week; $i++){
                     <?php if(($today1 == $day) && ($this_month)) : ?>
                         <span style="color:red" id="today_highlight">本日</span>
                     <?php endif ?>
-                <input type="checkbox" data-weekday="<?php echo $day_week ?>" class="chk" name="check_test" value="<?php echo $day ?>">
-                <input class="color_change" name="color[]" type="color" value="<?php echo isset($result->color) ? $result->color : "#ffffff" ?>"/>
-                &nbsp;<button class="set_color btn btn-primary btn-xs" type="button">適用</button><br>
-                <textarea id="" name="text_save[]"><?php echo isset($result->text) ? $result->text : '';?></textarea>
+					<div class="ps-2">
+						<input type="checkbox" data-weekday="<?php echo $day_week ?>" class="chk pl-2" name="check_test" value="<?php echo $day ?>">
+					</div>
+				<div style="flex-grow:1"></div>
+				<button style="" class="plus_button btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target=".plus">+</button><br>
                 <?php $day++ ?>
+				</div>
+				<?php foreach($result as $row) : ?>
+				<div>
+					<?php if(!empty($row->title)) : ?>
+					<input type="button" class="title" value="<?php echo $row->title ?>"/>
+					<?php endif ?>
+				</div>
+				<?php endforeach ?>
             </td>
             <?php else : ?>
             <td></td>
@@ -369,17 +321,73 @@ for($i=0; $i<$total_week; $i++){
     </tfoot>
 </table>
      <input type="checkbox" id="check_all"/>
-    <button class="btn btn-success" type="submit">保存</button>
-    <button class="btn btn-danger" id="del" type="button">削除</button>
-    <input type="text" id="input_text"/>&nbsp;
-    <input type="color" id="color_change_all" value="#ffffff"/>
-    <button class="btn btn-default" id="input" type="button">テキスト入力</button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#calendar_search" data-whatever="@fat">検索</button>
+	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@fat">検索</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#calendar_search" data-bs-whatever="@fat">検索</button>
 </form>
 
 
+<!-- + button modal -->
+<div class="modal plus" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">日程追加</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+
+			<div class="modal-body">
+				<div>
+					<input type="text" id="plus_title"/>
+				</div>
+				<div>
+					<textarea id="plus_textarea">ds</textarea>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button id="plus_delete" type="button" class="btn btn-danger">削除</button>
+				<button id="plus_cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+				<button id="plus_save" type="button" class="btn btn-success">保存</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+
+    <div class="modal-content">
+      	<div class="modal-header">
+        	<h1 class="modal-title fs-5" id="exampleModalLabel">検索</h1>
+        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      	</div>
+
+      	<div class="modal-body">
+			<form>
+			<div class="mb-3">
+				<label for="text_search" class="col-form-label">Recipient:</label>
+				<input type="text" class="form-control" id="recipient-name">
+			</div>
+			<div class="mb-3">
+				<label for="message-text" class="col-form-label">Message:</label>
+				<textarea class="form-control" id="message-text"></textarea>
+			</div>
+			</form>
+      	</div>
+
+      	<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary">Send message</button>
+      	</div>
+    </div>
+  </div>
+</div>
+
 <!-- modal -->
-<div class="modal fade" id="calendar_search" tabindex="0" role="dialog">
+<div class="modal fade" id="calendar_search" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
 
     <div class="modal-content">
@@ -392,7 +400,7 @@ for($i=0; $i<$total_week; $i++){
         <div class="text_input_group">
             <label for="text_search" class="control-label">検索したいテキストを入力して下さい。</label>
             <input type="text" class="form-control" id="text_search">
-            <button class="btn btn-default" id="text_search_input"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 入力</button>
+            <button class="btn btn-secondary" id="text_search_input"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 入力</button>
         </div>
         <div class="output_group">
             <table class="table table-bordered">
@@ -411,7 +419,7 @@ for($i=0; $i<$total_week; $i++){
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
       </div>
 
     </div>
