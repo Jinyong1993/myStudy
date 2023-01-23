@@ -48,7 +48,7 @@
                 day:days,
                 title:$("#plus_title").val(),
                 text:$("#plus_textarea").val(),
-                color:$("#plus_color").val(),
+                color_id:$("#plus_color").val(),
             }
             console.log(plus_object)
 
@@ -112,12 +112,34 @@
             borderWidth:3
         },5000);
 
+        $("#color_save").click(function(){
+            var color_object = {
+                color_name:$("#color_name").val(),
+                color_note:$("#color_note").val(),
+                color_color:$(".color_list").val(),
+            }
+
+            $.ajax({
+                url: "color_save_ajax",
+                type: "post",
+                data: color_object,
+                dataType: "json"
+            }).done(function(data) {
+                if(data.success){
+                    location.reload()
+                } else {
+                    alert(data.error)
+                }
+            })
+        });
+
         $(".plus_button").click(function (){
             $("#plus_delete").hide();
 			var plus_position = $(this).closest('td').find(':checkbox[name=check_test]').val()
 			
             $("#plus_title").val(null)
             $("#plus_textarea").val(null)
+            $("#plus_color").val("#ffffff")
             $("#plus_save").off('click')
             
             $("#plus_save").click(function (){
@@ -127,7 +149,7 @@
                     day:plus_position,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
-                    color:$("#plus_color").val(),
+                    color_id:$("#plus_color").val(),
                 }
 
                 $.ajax({
@@ -161,7 +183,7 @@
             }).done(function(data) {
                 $("#plus_title").val(data.title);
                 $("#plus_textarea").val(data.text);
-                $("#plus_color").val(data.color);
+                $("#plus_color").val(data.color_id);
             })
             
             $("#plus_save").off('click')
@@ -174,7 +196,7 @@
                     day:day,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
-                    color:$("#plus_color").val(),
+                    color_id:$("#plus_color").val(),
                 }
 
                 $.ajax({
@@ -199,7 +221,7 @@
                     day:day,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
-                    color:$("#plus_color").val(),
+                    color_id:$("#plus_color").val(),
                 }
 
                 $.ajax({
@@ -251,6 +273,10 @@
                 days.push($(this).val());
             });
 
+            $("#plus_title").val(null)
+            $("#plus_textarea").val(null)
+            $("#plus_color").val("#ffffff")
+
             $("#plus_save").off('click')
             $("#plus_save").click(function (){
                 var plus_object = {
@@ -259,7 +285,7 @@
                     day:days,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
-                    color:$("#plus_color").val(),
+                    color_id:$("#plus_color").val(),
                 }
                 $.ajax({
                     url: "plus_ajax_controller",
@@ -420,7 +446,7 @@ for($i=0; $i<$total_week; $i++){
             <?php if($result) : ?>
             <?php foreach($result as $row) : ?>
                 <div>
-                    <input type="button" class="title" data-id="<?php echo $row->id ?>" value="<?php echo $row->title ?>" style="background-color:<?php echo $row->color ?>" data-bs-toggle="modal" data-bs-target=".plus"/>
+                    <input type="button" class="title" data-id="<?php echo $row->id ?>" value="<?php echo $row->title ?>" style="background-color:<?php echo $row->color_id ?>" data-bs-toggle="modal" data-bs-target=".plus"/>
                 </div>
             <?php endforeach ?>
             <?php endif ?>
@@ -451,8 +477,9 @@ for($i=0; $i<$total_week; $i++){
 	<button type="button" id="chk_plus" class="btn btn-success" data-bs-toggle="modal" data-bs-target=".plus">追加</button>
 	<button type="button" id="del" class="btn btn-danger">削除</button>
 
-	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">検索</button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#calendar_search">検索</button>
+	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#calendar_search">検索</button>
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#color_edit">カラー設定</button>
+    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#color_info">マイカラー情報</button>
 </form>
 
 
@@ -466,20 +493,33 @@ for($i=0; $i<$total_week; $i++){
 			</div>
 
 			<div class="modal-body">
-				<div>
-					<input type="text" id="plus_title" value="" placeholder="予定を入力する。"/>
-				</div>
-				<div>
-					<textarea id="plus_textarea" placeholder="備考"></textarea>
-				</div>
-                <div>
-                    <input type="color" class="m-auto form-control form-control-color" id="plus_color" value="#ffffff">
-                </div>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>予定</th>
+                            <td>
+                                <input type="text" id="plus_title" value="" placeholder="予定を入力する。"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>備考</th>
+                            <td>
+                                <textarea id="plus_textarea" placeholder="備考"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>カラー</th>
+                            <td>
+                                <input type="color" class="form-control form-control-color" id="plus_color" value="#ffffff">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 			</div>
 
 			<div class="modal-footer">
 				<button id="plus_delete" type="button" class="btn btn-danger">削除</button>
-				<button id="plus_cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+				<button id="plus_cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
 				<button id="plus_save" type="button" class="btn btn-success">保存</button>
 			</div>
 		</div>
@@ -487,9 +527,8 @@ for($i=0; $i<$total_week; $i++){
 </div>
 
 
-
-
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- search modal -->
+<div class="modal fade" id="calendar_search" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog" role="document">
 
     <div class="modal-content">
@@ -499,65 +538,131 @@ for($i=0; $i<$total_week; $i++){
       	</div>
 
       	<div class="modal-body">
-			<form>
-			<div class="mb-3">
-				<label for="text_search" class="col-form-label">Recipient:</label>
-				<input type="text" class="form-control" id="recipient-name">
-			</div>
-			<div class="mb-3">
-				<label for="message-text" class="col-form-label">Message:</label>
-				<textarea class="form-control" id="message-text"></textarea>
-			</div>
-			</form>
-      	</div>
+            <div class="text_input_group">
+                <label for="text_search" class="control-label">検索したい予定を入力して下さい。</label>
+                <input type="text" class="form-control" id="text_search">
+                <button class="btn btn-secondary" id="text_search_input"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 入力</button>
+            </div>
+            <div class="output_group">
+                <table class="table table">
+                <thead>
+                    <tr>
+                        <th>日付</th>
+                        <th>内容</th>
+                        <th></th>
+                    </tr>
+                </thead> 
+                <tbody id="search_result">
 
-      	<div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary">Send message</button>
-      	</div>
+                </tbody>   
+                </table>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+        </div>
     </div>
   </div>
 </div>
 
-<!-- modal -->
-<div class="modal fade" id="calendar_search" tabindex="-1" role="dialog">
+<!-- color edit modal -->
+<div class="modal fade" id="color_edit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
 
     <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">検索</h4>
-        </div>
+      	<div class="modal-header">
+        	<h1 class="modal-title fs-5" id="exampleModalLabel">カラー設定</h1>
+        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      	</div>
 
-    <div class="modal-body">
-        <div class="text_input_group">
-            <label for="text_search" class="control-label">検索したいテキストを入力して下さい。</label>
-            <input type="text" class="form-control" id="text_search">
-            <button class="btn btn-secondary" id="text_search_input"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 入力</button>
-        </div>
-        <div class="output_group">
-            <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>日付</th>
-                    <th>内容</th>
-                    <th></th>
-                </tr>
-            </thead> 
-            <tbody id="search_result">
-
-            </tbody>   
+      	<div class="modal-body">
+            <table class="table">
+                <thead>
+                    
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>名前</th>
+                        <td><input type="text" id="color_name"/></td>
+                    </tr>
+                    <tr>
+                        <th>説明</th>
+                        <td><textarea id="color_note"></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>カラー</th>
+                        <td>
+                            <select class="color_list form-select">
+                                <option selected>カラーを選択する</option>
+                                <option value="red">レッド</option>
+                                <option value="blue">ブルー</option>
+                                <option value="green">グリーン</option>
+                                <option value="yellow">イエロー</option>
+                                <option value="orange">オレンジ</option>
+                                <option value="purple">パープル</option>
+                                <option value="pink">ピンク</option>
+                                <option value="other">その他</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
-      </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
-      </div>
-
+        <div class="modal-footer">
+            <button id="color_cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+            <button id="color_save" type="button" class="btn btn-success">保存</button>
+        </div>
     </div>
   </div>
 </div>
+
+<!-- my color info modal -->
+<div class="modal fade" id="color_info" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+
+    <div class="modal-content">
+      	<div class="modal-header">
+        	<h1 class="modal-title fs-5" id="exampleModalLabel">マイカラー情報</h1>
+        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      	</div>
+
+      	<div class="modal-body">
+            <table class="table">
+                <thead>
+                    
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>名前</th>
+                        <td><input type="text" id="color_name" value=""/></td>
+                    </tr>
+                    <tr>
+                        <th>説明</th>
+                        <td><textarea id="color_note" value=""></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>カラー</th>
+                        <td>
+                            <select class="color_list form-select">
+                                <option selected>マイカラー</option>
+                                <option value="red">レッド</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal-footer">
+            <button id="color_cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+            <button id="color_save" type="button" class="btn btn-success">保存</button>
+        </div>
+    </div>
+  </div>
+</div>
+
 </form>
 </body>
 </html>

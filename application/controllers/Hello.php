@@ -84,7 +84,7 @@ class Hello extends CI_Controller {
 		$arr = array();
 
 		$this->load->database();
-		$this->db->select('id, user_id, year, month, day, title, text, color');
+		$this->db->select('id, user_id, year, month, day, title, text, color_id');
 		$this->db->from('calendar');
 		$this->db->where('user_id', $user_id);
 		$this->db->where('year', $year);
@@ -105,7 +105,7 @@ class Hello extends CI_Controller {
 		$year = $this->input->post("year");
 		$month = $this->input->post("month");
 		$text = $this->input->post("text_save");
-		$color = $this->input->post("color");
+		$color_id = $this->input->post("color_id");
 
 		$isError = $this->validate($year, $month);
 		if($isError){
@@ -130,12 +130,12 @@ class Hello extends CI_Controller {
 				'month' => $month,
 				'day' => $day+1,
 				'text' => $in,
-				'color' => $color[$day],
+				'color_id' => $color_id[$day],
 			);
 			if(isset($select[$day+1]))
 			{
 				$this->db->set('text', $in);
-				$this->db->set('color', $color[$day]);
+				$this->db->set('color_id', $color_id[$day]);
 				$this->db->where('user_id', $user_id);
 				$this->db->where('year', $year);
 				$this->db->where('month', $month);
@@ -189,7 +189,7 @@ class Hello extends CI_Controller {
 		$day = $this->input->post('day');
 		$title = $this->input->post('title');
 		$text = $this->input->post('text');
-		$color = $this->input->post('color');
+		$color_id = $this->input->post('color_id');
 
 		$this->db->from('calendar');
 		$this->db->where('user_id', $user_id);
@@ -226,12 +226,12 @@ class Hello extends CI_Controller {
 					'day' => $d,
 					'title' => $title,
 					'text' => $text,
-					'color' => $color,
+					'color_id' => $color_id,
 				);
 				if(isset($result)){
 					$this->db->set('title', $title);
 					$this->db->set('text', $text);
-					$this->db->set('color', $color);
+					$this->db->set('color_id', $color_id);
 					$this->db->where('user_id', $user_id);
 					$this->db->where('id', $id);
 					$this->db->update('calendar');
@@ -247,11 +247,11 @@ class Hello extends CI_Controller {
 				'day' => $day,
 				'title' => $title,
 				'text' => $text,
-				'color' => $color,
+				'color_id' => $color_id,
 			);
 			$this->db->set('title', $title);
 			$this->db->set('text', $text);
-			$this->db->set('color', $color);
+			$this->db->set('color_id', $color_id);
 			$this->db->where('user_id', $user_id);
 			$this->db->where('id', $id);
 			$this->db->update('calendar');
@@ -263,12 +263,12 @@ class Hello extends CI_Controller {
 				'day' => $day,
 				'title' => $title,
 				'text' => $text,
-				'color' => $color,
+				'color_id' => $color_id,
 			);
 			if(isset($result)){
 				$this->db->set('title', $title);
 				$this->db->set('text', $text);
-				$this->db->set('color', $color);
+				$this->db->set('color_id', $color_id);
 				$this->db->where('user_id', $user_id);
 				$this->db->where('id', $id);
 				$this->db->update('calendar');
@@ -288,7 +288,7 @@ class Hello extends CI_Controller {
 		$day = $this->input->post('day');
 		$title = $this->input->post('title');
 		$text = $this->input->post('text');
-		$color = $this->input->post('color');
+		$color_id = $this->input->post('color_id');
 
 		if(is_array($day) || is_array($id)){
 			foreach($day as $d){
@@ -301,7 +301,7 @@ class Hello extends CI_Controller {
 						'day' => $d,
 						'title' => $title,
 						'text' => $text,
-						'color' => $color,
+						'color_id' => $color_id,
 					);
 					$this->db->from('calendar');
 					$this->db->where('user_id', $user_id)
@@ -321,6 +321,23 @@ class Hello extends CI_Controller {
 		);
 
 		echo json_encode($response);
+	}
+
+	public function color_save_ajax()
+	{
+		$user_id = $this->session->userdata('user_id');
+		$color_name = $this->input->post('color_name');
+		$color_note = $this->input->post('color_note');
+		$color_color = $this->input->post('color_color');
+
+		$color_data = array(
+			'user_id' => $user_id,
+			'color_name' => $color_name,
+			'color_note' => $color_note,
+			'color_color' => $color_color,
+		);
+
+		$this->db->insert('color', $color_data);
 	}
 	
 	private function validate($year, $month){
