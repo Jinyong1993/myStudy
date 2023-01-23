@@ -161,6 +161,7 @@
             }).done(function(data) {
                 $("#plus_title").val(data.title);
                 $("#plus_textarea").val(data.text);
+                $("#plus_color").val(data.color);
             })
             
             $("#plus_save").off('click')

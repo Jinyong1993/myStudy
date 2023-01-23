@@ -231,6 +231,7 @@ class Hello extends CI_Controller {
 				if(isset($result)){
 					$this->db->set('title', $title);
 					$this->db->set('text', $text);
+					$this->db->set('color', $color);
 					$this->db->where('user_id', $user_id);
 					$this->db->where('id', $id);
 					$this->db->update('calendar');
@@ -250,6 +251,7 @@ class Hello extends CI_Controller {
 			);
 			$this->db->set('title', $title);
 			$this->db->set('text', $text);
+			$this->db->set('color', $color);
 			$this->db->where('user_id', $user_id);
 			$this->db->where('id', $id);
 			$this->db->update('calendar');
@@ -266,6 +268,7 @@ class Hello extends CI_Controller {
 			if(isset($result)){
 				$this->db->set('title', $title);
 				$this->db->set('text', $text);
+				$this->db->set('color', $color);
 				$this->db->where('user_id', $user_id);
 				$this->db->where('id', $id);
 				$this->db->update('calendar');
