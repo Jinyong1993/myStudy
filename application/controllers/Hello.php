@@ -285,6 +285,7 @@ class Hello extends CI_Controller {
 		$day = $this->input->post('day');
 		$title = $this->input->post('title');
 		$text = $this->input->post('text');
+		$color = $this->input->post('color');
 
 		if(is_array($day) || is_array($id)){
 			foreach($day as $d){
@@ -297,6 +298,7 @@ class Hello extends CI_Controller {
 						'day' => $d,
 						'title' => $title,
 						'text' => $text,
+						'color' => $color,
 					);
 					$this->db->from('calendar');
 					$this->db->where('user_id', $user_id)
@@ -307,7 +309,7 @@ class Hello extends CI_Controller {
 		} else {
 			$this->db->from('calendar');
 			$this->db->where('user_id', $user_id)
-					 ->where('id', $i);
+					 ->where('id', $id);
 			$this->db->delete('calendar');
 		}
 

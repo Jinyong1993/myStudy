@@ -48,6 +48,7 @@
                 day:days,
                 title:$("#plus_title").val(),
                 text:$("#plus_textarea").val(),
+                color:$("#plus_color").val(),
             }
             console.log(plus_object)
 
@@ -126,6 +127,7 @@
                     day:plus_position,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
+                    color:$("#plus_color").val(),
                 }
 
                 $.ajax({
@@ -171,6 +173,7 @@
                     day:day,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
+                    color:$("#plus_color").val(),
                 }
 
                 $.ajax({
@@ -195,6 +198,7 @@
                     day:day,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
+                    color:$("#plus_color").val(),
                 }
 
                 $.ajax({
@@ -254,6 +258,7 @@
                     day:days,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
+                    color:$("#plus_color").val(),
                 }
                 $.ajax({
                     url: "plus_ajax_controller",
@@ -414,9 +419,7 @@ for($i=0; $i<$total_week; $i++){
             <?php if($result) : ?>
             <?php foreach($result as $row) : ?>
                 <div>
-                    <?php if(!empty($row->title)) : ?>
-                    <input type="button" class="title" data-id="<?php echo $row->id ?>" value="<?php echo $row->title ?>" data-bs-toggle="modal" data-bs-target=".plus"/>
-                    <?php endif ?>
+                    <input type="button" class="title" data-id="<?php echo $row->id ?>" value="<?php echo $row->title ?>" style="background-color:<?php echo $row->color ?>" data-bs-toggle="modal" data-bs-target=".plus"/>
                 </div>
             <?php endforeach ?>
             <?php endif ?>
@@ -457,7 +460,7 @@ for($i=0; $i<$total_week; $i++){
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">日程追加</h5>
+				<h5 class="modal-title">予定追加</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 			</div>
 
@@ -468,6 +471,9 @@ for($i=0; $i<$total_week; $i++){
 				<div>
 					<textarea id="plus_textarea" placeholder="備考"></textarea>
 				</div>
+                <div>
+                    <input type="color" class="m-auto form-control form-control-color" id="plus_color" value="#ffffff">
+                </div>
 			</div>
 
 			<div class="modal-footer">
