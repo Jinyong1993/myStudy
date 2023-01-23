@@ -31,7 +31,31 @@
         });
 
         $("#del").click(function (){
-           $(':checkbox[name="check_test"]:checked').parent("td").children("textarea").empty();
+            var days = []
+            $(':checkbox[name="check_test"]:checked').each(function () {
+                days.push($(this).val());
+            });
+            console.log(days);
+
+            var plus_object = {
+                    id:id,
+                    year:$("#year_ajax").val(),
+                    month:$("#month_ajax").val(),
+                    day:days,
+                    title:$("#plus_title").val(),
+                    text:$("#plus_textarea").val(),
+                }
+                console.log(plus_object)
+
+                $.ajax({
+                    url: "delete_ajax",
+                    type: "post",
+                    data: plus_object,
+                    dataType: "json"
+                }).done(function(data) {
+                    location.reload()
+                    alert("処理しました。")
+                })
         });
 
         $("#input").click(function (){
