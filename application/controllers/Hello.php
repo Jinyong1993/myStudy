@@ -286,26 +286,28 @@ class Hello extends CI_Controller {
 		$title = $this->input->post('title');
 		$text = $this->input->post('text');
 
-		if(is_array($day)){
+		if(is_array($day) || is_array($id)){
 			foreach($day as $d){
-				$plus_data = array(
-					'user_id' => $user_id,
-					'year' => $year,
-					'month' => $month,
-					'day' => $d,
-					'title' => $title,
-					'text' => $text,
-					'color' => $color,
-				);
-				$this->db->from('calendar');
-				$this->db->where('user_id', $user_id)
-						->where('id', $id);
-				$this->db->delete('calendar');
+				foreach($id as $i){
+					$plus_data = array(
+						'id' => $i,
+						'user_id' => $user_id,
+						'year' => $year,
+						'month' => $month,
+						'day' => $d,
+						'title' => $title,
+						'text' => $text,
+					);
+					$this->db->from('calendar');
+					$this->db->where('user_id', $user_id)
+							->where('id', $i);
+					$this->db->delete('calendar');
+				}
 			}
 		} else {
 			$this->db->from('calendar');
 			$this->db->where('user_id', $user_id)
-					 ->where('id', $id);
+					 ->where('id', $i);
 			$this->db->delete('calendar');
 		}
 

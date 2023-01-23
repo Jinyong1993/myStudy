@@ -26,36 +26,40 @@
             $(':checkbox[name="check_test"]:checked').each(function () {
                 days.push($(this).val());
                 $("#output_area").text(days);
-                console.log($(this).parent());
             });
         });
 
         $("#del").click(function (){
             var days = []
+            var ids = []
             $(':checkbox[name="check_test"]:checked').each(function () {
                 days.push($(this).val());
             });
+            $(':checkbox[name="check_test"]:checked').closest('td').find('.title').each(function(){
+                ids.push($(this).data('id'));
+            });
             console.log(days);
+            console.log(ids);
 
             var plus_object = {
-                    id:id,
-                    year:$("#year_ajax").val(),
-                    month:$("#month_ajax").val(),
-                    day:days,
-                    title:$("#plus_title").val(),
-                    text:$("#plus_textarea").val(),
-                }
-                console.log(plus_object)
+                id:ids,
+                year:$("#year_ajax").val(),
+                month:$("#month_ajax").val(),
+                day:days,
+                title:$("#plus_title").val(),
+                text:$("#plus_textarea").val(),
+            }
+            console.log(plus_object)
 
-                $.ajax({
-                    url: "delete_ajax",
-                    type: "post",
-                    data: plus_object,
-                    dataType: "json"
-                }).done(function(data) {
-                    location.reload()
-                    alert("処理しました。")
-                })
+            $.ajax({
+                url: "delete_ajax",
+                type: "post",
+                data: plus_object,
+                dataType: "json"
+            }).done(function(data) {
+                location.reload()
+                alert("処理しました。")
+            })
         });
 
         $("#input").click(function (){
@@ -108,6 +112,7 @@
         },5000);
 
         $(".plus_button").click(function (){
+            $("#plus_delete").hide();
 			var plus_position = $(this).closest('td').find(':checkbox[name=check_test]').val()
 			
             $("#plus_title").val(null)
@@ -191,7 +196,6 @@
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
                 }
-                console.log(plus_object)
 
                 $.ajax({
                     url: "delete_ajax",
@@ -207,7 +211,6 @@
 
         $("#text_search_input").click(function() {
             $("#text_search").val();
-            console.log($("#text_search").val());
 
             $('#search_result').empty();
 
@@ -242,9 +245,7 @@
             $(':checkbox[name="check_test"]:checked').each(function () {
                 days.push($(this).val());
             });
-            console.log(days);
 
-            
             $("#plus_save").off('click')
             $("#plus_save").click(function (){
                 var plus_object = {
@@ -409,17 +410,19 @@ for($i=0; $i<$total_week; $i++){
 					</div>
 				<div style="flex-grow:1"></div>
 				<button style="" class="plus_button btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target=".plus">+</button><br>
-                <?php $day++ ?>
-				</div>
-				<?php foreach($result as $row) : ?>
-				<div>
-					<?php if(!empty($row->title)) : ?>
-					<input type="button" class="title" data-id="<?php echo $row->id ?>" value="<?php echo $row->title ?>" data-bs-toggle="modal" data-bs-target=".plus"/>
-					<?php endif ?>
-				</div>
-				<?php endforeach ?>
+            </div>
+            <?php if($result) : ?>
+            <?php foreach($result as $row) : ?>
+                <div>
+                    <?php if(!empty($row->title)) : ?>
+                    <input type="button" class="title" data-id="<?php echo $row->id ?>" value="<?php echo $row->title ?>" data-bs-toggle="modal" data-bs-target=".plus"/>
+                    <?php endif ?>
+                </div>
+            <?php endforeach ?>
+            <?php endif ?>
+            <?php $day++ ?>
             </td>
-            <?php else : ?>
+        <?php else : ?>
             <td></td>
         <?php endif ?>
     <?php
@@ -460,11 +463,10 @@ for($i=0; $i<$total_week; $i++){
 
 			<div class="modal-body">
 				<div>
-                    タイトル<br>
-					<input type="text" id="plus_title" value=""/>
+					<input type="text" id="plus_title" value="" placeholder="予定を入力する。"/>
 				</div>
 				<div>
-					<textarea id="plus_textarea"></textarea>
+					<textarea id="plus_textarea" placeholder="備考"></textarea>
 				</div>
 			</div>
 
