@@ -116,7 +116,7 @@
             var color_object = {
                 color_name:$("#color_name").val(),
                 color_note:$("#color_note").val(),
-                color_color:$(".color_list").val(),
+                color_color:$("#color_list").val(),
             }
 
             $.ajax({
@@ -133,15 +133,97 @@
             })
         });
 
+        $("#color_edit_list").on("change", function(){
+            if($(this).val() == "other"){
+                $("#color_edit_list").remove();
+                var input_color = '<input type="color" class="form-control form-control-color" id="color_edit_list" value="#ffffff">'
+                $("#other_position").append(input_color)
+            }
+        });
+
+        // $("#color_my").click(function(){
+        //     $("#my_color_edit_list").empty()
+        //     $.ajax({
+        //         url: "my_color_ajax",
+        //         type: "get",
+        //         dataType: "json"
+        //     }).done(function(data) {
+        //         var default_option = "<option selected>マイカラー</option>"
+        //         $("#my_color_edit_list").append(default_option)
+        //         $.each(data, function(i,v){
+        //             var my_option = "<option value="+v.color_color+">"+v.color_name+"</option>"
+        //             $("#my_color_edit_list").append(my_option)
+        //         });
+        //     });
+        // });
+
+        $("#my_color_edit_list").on("change", function(){
+            var color_id_object = {
+                color_id:$("#my_color_edit_list").val(),
+            }
+
+            $.ajax({
+                url: "my_color_ajax",
+                type: "get",
+                data: color_id_object,
+                dataType: "json"
+            }).done(function(data){
+                console.log(data)
+                $("#color_edit_name").val(data.color_name)
+                $("#color_edit_note").val(data.color_note)
+            });
+        });
+
+        $("#color_edit_save").click(function(){
+            var color_edit_object = {
+                color_id:$("#my_color_edit_list").val(),
+                color_name:$("#color_edit_name").val(),
+                color_note:$("#color_edit_note").val(),
+                color_color:$("#color_edit_list").val(),
+            }
+
+            $.ajax({
+                url: "color_edit_ajax",
+                type: "post",
+                data: color_edit_object,
+                dataType: "json"
+            }).done(function(data) {
+                console.log(data)
+                if(data.success){
+                    location.reload()
+                } else {
+                    alert(data.error)
+                }
+            });
+        });
+
+        $("#color_edit_del").click(function(){
+            var color_del_object = {
+                color_id:$("#my_color_edit_list").val(),
+            }
+
+            $.ajax({
+                url: "color_del_ajax",
+                type: "post",
+                data: color_del_object,
+                dataType: "json"
+            }).done(function(data) {
+                if(data.success){
+                    location.reload()
+                } else {
+                    alert(data.error)
+                }
+            });
+        });
+
         $(".plus_button").click(function (){
             $("#plus_delete").hide();
 			var plus_position = $(this).closest('td').find(':checkbox[name=check_test]').val()
 			
             $("#plus_title").val(null)
             $("#plus_textarea").val(null)
-            $("#plus_color").val("#ffffff")
-            $("#plus_save").off('click')
             
+            $("#plus_save").off("click")
             $("#plus_save").click(function (){
                 var plus_object = {
                     year:$("#year_ajax").val(),
@@ -149,8 +231,9 @@
                     day:plus_position,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
-                    color_id:$("#plus_color").val(),
+                    color_id:$("#my_color_list").val(),
                 }
+                console.log(plus_object)
 
                 $.ajax({
                     url: "plus_ajax_controller",
@@ -163,7 +246,7 @@
                     } else {
                         alert(data.error)
                     }
-                })
+                });
             });
         });
 
@@ -183,7 +266,7 @@
             }).done(function(data) {
                 $("#plus_title").val(data.title);
                 $("#plus_textarea").val(data.text);
-                $("#plus_color").val(data.color_id);
+                $("#my_color_list").val(data.color_id);
             })
             
             $("#plus_save").off('click')
@@ -196,7 +279,7 @@
                     day:day,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
-                    color_id:$("#plus_color").val(),
+                    color_id:$("#my_color_list").val(),
                 }
 
                 $.ajax({
@@ -253,8 +336,6 @@
             }).done(function(data) {
                 $.each(data, function(i,v){
                     var date = new Date(v.year+"/"+v.month+"/"+v.day)
-                    var date1 = new Date(v.year,v.month,v.day)
-                    var date2 = new Date(v.year,v.month)
                     var date_f = date.getFullYear() + "年" + (date.getMonth()+1) + "月" + date.getDate() + "日"
 
                     var a = '<a href="https://localhost:10443/sample/index.php/Hello/calendar?year='+v.year+'&month='+v.month+'">link</a>'
@@ -275,7 +356,6 @@
 
             $("#plus_title").val(null)
             $("#plus_textarea").val(null)
-            $("#plus_color").val("#ffffff")
 
             $("#plus_save").off('click')
             $("#plus_save").click(function (){
@@ -285,7 +365,7 @@
                     day:days,
                     title:$("#plus_title").val(),
                     text:$("#plus_textarea").val(),
-                    color_id:$("#plus_color").val(),
+                    color_id:$("#my_color_list").val(),
                 }
                 $.ajax({
                     url: "plus_ajax_controller",
@@ -446,7 +526,13 @@ for($i=0; $i<$total_week; $i++){
             <?php if($result) : ?>
             <?php foreach($result as $row) : ?>
                 <div>
-                    <input type="button" class="title" data-id="<?php echo $row->id ?>" value="<?php echo $row->title ?>" style="background-color:<?php echo $row->color_id ?>" data-bs-toggle="modal" data-bs-target=".plus"/>
+                    <input type="button" 
+                    class="title" 
+                    data-id="<?php echo $row->id ?>" 
+                    value="<?php echo $row->title ?>" 
+                    data-bs-toggle="modal" 
+                    data-bs-target=".plus" 
+                    style="background-color:<?php echo $row->color_color ?>"/>
                 </div>
             <?php endforeach ?>
             <?php endif ?>
@@ -478,10 +564,8 @@ for($i=0; $i<$total_week; $i++){
 	<button type="button" id="del" class="btn btn-danger">削除</button>
 
 	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#calendar_search">検索</button>
-    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#color_edit">カラー設定</button>
-    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#color_info">マイカラー情報</button>
+    <button type="button" id="color_my" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#color_edit">カラー設定</button>
 </form>
-
 
 <!-- + button modal -->
 <div class="modal plus" tabindex="-1">
@@ -508,9 +592,16 @@ for($i=0; $i<$total_week; $i++){
                             </td>
                         </tr>
                         <tr>
-                            <th>カラー</th>
+                            <th>マイカラー</th>
                             <td>
-                                <input type="color" class="form-control form-control-color" id="plus_color" value="#ffffff">
+                                <select class="form-select" id="my_color_list">
+                                    <option selected>マイカラー</option>
+                                    <?php foreach($color_result as $row) : ?>
+                                        <option value="<?php echo $row->color_id ?>">
+                                            <?php echo $row->color_name ?>
+                                        </option>
+                                    <?php endforeach ?>
+                                </select>
                             </td>
                         </tr>
                     </tbody>
@@ -584,70 +675,38 @@ for($i=0; $i<$total_week; $i++){
                 <tbody>
                     <tr>
                         <th>名前</th>
-                        <td><input type="text" id="color_name"/></td>
+                        <td><input type="text" id="color_edit_name"/></td>
                     </tr>
                     <tr>
                         <th>説明</th>
-                        <td><textarea id="color_note"></textarea></td>
+                        <td><textarea id="color_edit_note"></textarea></td>
                     </tr>
                     <tr>
                         <th>カラー</th>
-                        <td>
-                            <select class="color_list form-select">
+                        <td id="other_position">
+                            <select class="form-select" id="color_edit_list">
                                 <option selected>カラーを選択する</option>
-                                <option value="red">レッド</option>
-                                <option value="blue">ブルー</option>
-                                <option value="green">グリーン</option>
-                                <option value="yellow">イエロー</option>
-                                <option value="orange">オレンジ</option>
-                                <option value="purple">パープル</option>
-                                <option value="pink">ピンク</option>
+                                <option value="#FF0000">レッド</option>
+                                <option value="#0000FF">ブルー</option>
+                                <option value="#008000">グリーン</option>
+                                <option value="#FFFF00">イエロー</option>
+                                <option value="#FF4500">オレンジ</option>
+                                <option value="#8B00FF">パープル</option>
+                                <option value="#FFC0CB">ピンク</option>
                                 <option value="other">その他</option>
                             </select>
                         </td>
                     </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="modal-footer">
-            <button id="color_cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-            <button id="color_save" type="button" class="btn btn-success">保存</button>
-        </div>
-    </div>
-  </div>
-</div>
-
-<!-- my color info modal -->
-<div class="modal fade" id="color_info" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-
-    <div class="modal-content">
-      	<div class="modal-header">
-        	<h1 class="modal-title fs-5" id="exampleModalLabel">マイカラー情報</h1>
-        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      	</div>
-
-      	<div class="modal-body">
-            <table class="table">
-                <thead>
-                    
-                </thead>
-                <tbody>
                     <tr>
-                        <th>名前</th>
-                        <td><input type="text" id="color_name" value=""/></td>
-                    </tr>
-                    <tr>
-                        <th>説明</th>
-                        <td><textarea id="color_note" value=""></textarea></td>
-                    </tr>
-                    <tr>
-                        <th>カラー</th>
+                        <th>マイカラー</th>
                         <td>
-                            <select class="color_list form-select">
+                            <select class="form-select" id="my_color_edit_list">
                                 <option selected>マイカラー</option>
-                                <option value="red">レッド</option>
+                                <?php foreach($color_result as $row) : ?>
+                                    <option value="<?php echo $row->color_id ?>">
+                                        <?php echo $row->color_name ?>
+                                    </option>
+                                <?php endforeach ?>
                             </select>
                         </td>
                     </tr>
@@ -656,8 +715,9 @@ for($i=0; $i<$total_week; $i++){
         </div>
 
         <div class="modal-footer">
-            <button id="color_cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-            <button id="color_save" type="button" class="btn btn-success">保存</button>
+            <button id="color_edit_del" type="button" class="btn btn-danger">削除</button>
+            <button id="color_edit_cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+            <button id="color_edit_save" type="button" class="btn btn-success">保存</button>
         </div>
     </div>
   </div>

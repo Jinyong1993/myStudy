@@ -243,26 +243,4 @@ class Login extends CI_Controller {
             return false;
         } 
     }
-
-    // function special_check($str)
-    // {
-    //     $pattern = "/[#\&\\+\-%@=\/\\\:;,\.\'\"\^`~\_|\!\/\?\*$#<>()\[\]\{\}]/i";
-    //     if(preg_match($pattern, $str, $match))
-    //     {
-    //     return false;
-    //     }
-
-    //     return true;
-    // }
-
-    // function password_check($password)
-    // {
-    //     $pattern = "/^[0-9A-Za-z]+$/";
-    //     if(preg_match($pattern, $password, $match))
-    //     {
-    //         return false;
-    //     }
-
-    //     return true;
-    // }
 }

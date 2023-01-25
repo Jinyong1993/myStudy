@@ -44,6 +44,12 @@ class Hello extends CI_Controller {
 	{
 		$year = $this->input->get("year") ?: date('Y');
 		$month = $this->input->get("month") ?: date('n');
+
+		$user_id = $this->session->userdata('user_id');
+		$this->db->from('color')
+				 ->where('user_id', $user_id);
+		$query = $this->db->get();
+		$color_result = $query->result();
 		
 		$arr = array();
 
@@ -71,6 +77,7 @@ class Hello extends CI_Controller {
 			'total_day' => $total_day,
 			'time' => $time,
 			'select' => $select,
+			'color_result' => $color_result,
 		);
 		
 		$this->load->view("test", $data);
@@ -78,17 +85,17 @@ class Hello extends CI_Controller {
 
 	private function select($year, $month)
 	{
-		$this->load->library('session');
 		$user_id = $this->session->userdata('user_id');
 
 		$arr = array();
 
 		$this->load->database();
-		$this->db->select('id, user_id, year, month, day, title, text, color_id');
+		$this->db->select('calendar.id, calendar.user_id, calendar.year, calendar.month, calendar.day, calendar.title, calendar.text, color.color_id, color.color_color');
 		$this->db->from('calendar');
-		$this->db->where('user_id', $user_id);
-		$this->db->where('year', $year);
-		$this->db->where('month', $month);
+		$this->db->where('calendar.user_id', $user_id);
+		$this->db->where('calendar.year', $year);
+		$this->db->where('calendar.month', $month);
+		$this->db->join('color', 'color.color_id=calendar.color_id', 'left');
 		$query = $this->db->get();
 
 		foreach($query->result() as $row){
@@ -146,14 +153,13 @@ class Hello extends CI_Controller {
 			}
 		}
 
-		$this->load->helper('url');
 		redirect("https://localhost:10443/sample/index.php/Hello/calendar?year=$year&month=$month");
 		// $query = $this->db->insert('calendar', $insert);
 
 	}
 
-	public function search_ajax_controller(){
-		$this->load->library('session');
+	public function search_ajax_controller()
+	{
 		$user_id = $this->session->userdata('user_id');
 
 		$text = $this->input->get('text');
@@ -168,7 +174,8 @@ class Hello extends CI_Controller {
 		echo json_encode($result);
 	}
 
-	public function title_ajax_controller(){
+	public function title_ajax_controller()
+	{
 		$user_id = $this->session->userdata('user_id');
 		$id = $this->input->get('id');
 
@@ -177,11 +184,73 @@ class Hello extends CI_Controller {
 		$this->db->where('id', $id);
 		$query = $this->db->get();
 		$result = $query->first_row();
-		echo json_encode($result);
 
+		echo json_encode($result);
 	}
 
-	public function plus_ajax_controller(){
+	public function color_edit_ajax()
+	{
+		$user_id = $this->session->userdata('user_id');
+		$color_id = $this->input->post('color_id');
+		$color_name = $this->input->post('color_name');
+		$color_note = $this->input->post('color_note');
+		$color_color = $this->input->post('color_color');
+
+		$color_data = array(
+			'user_id' => $user_id,
+			'color_id' => $color_id,
+			'color_name' => $color_name,
+			'color_note' => $color_note,
+			'color_color' => $color_color,
+		);
+
+		$response = array(
+			'success' => true
+		);
+
+		$this->form_validation->set_rules('color_name', '名前', 'required');
+		if ($this->form_validation->run() == FALSE){
+			$response['success'] = false;
+			$response['error'] = validation_errors();
+			echo json_encode($response);
+			return;
+		}
+
+		$this->db->from('color');
+		$this->db->where('user_id', $user_id);
+		$this->db->where('color_id', $color_id);
+
+		if(isset($color_id)){
+			$this->db->set('color_name', $color_name);
+			$this->db->set('color_note', $color_note);
+			$this->db->set('color_color', $color_color);
+			$this->db->update('color');
+		} else {
+			$this->db->insert('color', $color_data);
+		}
+
+		echo json_encode($response);
+	}
+
+	public function color_del_ajax()
+	{
+		$user_id = $this->session->userdata('user_id');
+		$color_id = $this->input->post('color_id');
+
+		$this->db->from('color')
+				 ->where('user_id', $user_id)
+				 ->where('color_id', $color_id)
+				 ->delete('color');
+		
+		$response = array(
+			'success' => true
+		);
+
+		echo json_encode($response);
+	}
+
+	public function plus_ajax_controller()
+	{
 		$user_id = $this->session->userdata('user_id');
 		$id = $this->input->post('id');
 		$year = $this->input->post('year');
@@ -337,7 +406,35 @@ class Hello extends CI_Controller {
 			'color_color' => $color_color,
 		);
 
+		$response = array(
+			'success' => true
+		);
+
+		$this->form_validation->set_rules('color_name', '名前', 'required');
+		if ($this->form_validation->run() == FALSE){
+			$response['success'] = false;
+			$response['error'] = validation_errors();
+			echo json_encode($response);
+			return;
+		}
+
 		$this->db->insert('color', $color_data);
+
+		echo json_encode($response);
+	}
+
+	public function my_color_ajax()
+	{
+		$user_id = $this->session->userdata('user_id');
+		$color_id = $this->input->get('color_id');
+
+		$this->db->from('color')
+				 ->where('user_id', $user_id)
+				 ->where('color_id', $color_id);
+		$query = $this->db->get();
+		$color_result = $query->first_row();
+		
+		echo json_encode($color_result);
 	}
 	
 	private function validate($year, $month){
