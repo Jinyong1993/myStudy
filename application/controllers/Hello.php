@@ -161,13 +161,17 @@ class Hello extends CI_Controller {
 	public function search_ajax_controller()
 	{
 		$user_id = $this->session->userdata('user_id');
-
+		$color_id = $this->input->get('color_id');
 		$text = $this->input->get('text');
 
-		// select省略可
+		// マイカラー選択がある場合
+		if(!empty($color_id)){
+			$this->db->where('calendar.color_id', $color_id);
+		}
 		$this->db->from('calendar');
-		$this->db->like('text', $text);
-		$this->db->where('user_id', $user_id);
+		$this->db->like('calendar.text', $text);
+		$this->db->where('calendar.user_id', $user_id);
+		$this->db->join('color', 'color.color_id=calendar.color_id', 'left');
 		$query = $this->db->get();
 		$result = $query->result();
 
@@ -198,7 +202,6 @@ class Hello extends CI_Controller {
 
 		$color_data = array(
 			'user_id' => $user_id,
-			'color_id' => $color_id,
 			'color_name' => $color_name,
 			'color_note' => $color_note,
 			'color_color' => $color_color,
@@ -216,18 +219,18 @@ class Hello extends CI_Controller {
 			return;
 		}
 
-		$this->db->from('color');
-		$this->db->where('user_id', $user_id);
-		$this->db->where('color_id', $color_id);
-
-		if(isset($color_id)){
+		if(!empty($color_id)){
+			$this->db->from('color');
 			$this->db->set('color_name', $color_name);
 			$this->db->set('color_note', $color_note);
 			$this->db->set('color_color', $color_color);
+			$this->db->where('user_id', $user_id);
+			$this->db->where('color_id', $color_id);
 			$this->db->update('color');
 		} else {
 			$this->db->insert('color', $color_data);
 		}
+
 
 		echo json_encode($response);
 	}

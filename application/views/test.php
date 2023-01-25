@@ -98,6 +98,21 @@
             } 
         });
 
+        // $("#my_color_toggle").on("change", function(){
+        //     var color_id = $("#my_color_toggle").val()
+
+        //     if(color_id){
+        //         $(".title").show()
+        //         $("input.title:not([data-color="+$(this).val()+"])").hide()
+        //     } else {
+        //         $(".title").show()
+        //     }
+        // });
+
+        $(".my_color_chk").click(function(){
+            $("input.title[data-color="+$(this).val()+"]").fadeToggle($(this).is(":checked"))
+        });
+
         $("#color_change_all").change(function (){
             $("input[name=check_test]:checked").parent("td").css({
                 "background-color":$(this).val()
@@ -324,28 +339,26 @@
 
             $('#search_result').empty();
 
-            var text_object = {
-                text:$("#text_search").val()
+            var search_object = {
+                text:$("#text_search").val(),
+                color_id:$("#my_color_search_list").val(),
             }
 
             $.ajax({
                 url: "search_ajax_controller",
                 type: "get",
-                data: text_object,
+                data: search_object,
                 dataType: "json" // data = JSON.parse(data)
             }).done(function(data) {
                 $.each(data, function(i,v){
                     var date = new Date(v.year+"/"+v.month+"/"+v.day)
                     var date_f = date.getFullYear() + "年" + (date.getMonth()+1) + "月" + date.getDate() + "日"
-
                     var a = '<a href="https://localhost:10443/sample/index.php/Hello/calendar?year='+v.year+'&month='+v.month+'">link</a>'
-                    var tr = '<tr><td>'+date_f+''+'</td> <td>'+v.text+'</td><td>'+a+'</td></tr>'
+                    var tr = '<tr><td>'+date_f+''+'</td><td>'+v.color_name+'</td><td>'+v.text+'</td><td>'+a+'</td></tr>'
                     
                     $('#search_result').append(tr)
-                    
                 })
             })
-
         });
 
         $("#chk_plus").click(function(){
@@ -423,6 +436,24 @@
 			</ul>
 		</div>
 		<form class="navbar-form navbar-left row" method="GET" action="https://localhost:10443/sample/index.php/Hello/calendar">
+            <div class="col-auto dropdown">
+                <button type="button" 
+                        class="btn btn-secondary btn-sm dropdown-toggle" 
+                        id="my_color_show" 
+                        data-bs-toggle="dropdown">マイカラー</button>
+                <ul class="dropdown-menu">
+                    <?php foreach($color_result as $row) : ?>
+                    <li class="dropdown-item">
+                        <label>
+                            <input type="checkbox"
+                                   class="my_color_chk"
+                                   value="<?php echo $row->color_id ?>"
+                                   checked>&nbsp;<?php echo $row->color_name ?>
+                        </label>
+                    </li>
+                    <?php endforeach ?>
+                </ul>
+            </div>
 			<div class="col-auto">
 			<?php if($month == 1) : ?>
 				<a class="btn btn-secondary btn-sm" href="https://localhost:10443/sample/index.php/Hello/calendar?<?php echo "year=".($year-1) ?>&month=12" role="button">先月</a>
@@ -464,9 +495,9 @@
 </nav>
 
 <form method="POST" action="https://localhost:10443/sample/index.php/Hello/insert">
-    <input type="text" id="year_ajax" name="year" value="<?php echo $year ?>"><input type="text" id="month_ajax" name="month" value="<?php echo $month ?>">
+    <input type="hidden" id="year_ajax" name="year" value="<?php echo $year ?>"><input type="hidden" id="month_ajax" name="month" value="<?php echo $month ?>">
 
-<table class="table table-condensed">
+<table class="table" id="calendar">
     <?php
     $first = "$year/$month/1";
     $time_stamp = strtotime($first);
@@ -521,13 +552,14 @@ for($i=0; $i<$total_week; $i++){
 						<input type="checkbox" data-weekday="<?php echo $day_week ?>" class="chk pl-2" name="check_test" value="<?php echo $day ?>">
 					</div>
 				<div style="flex-grow:1"></div>
-				<button style="" class="plus_button btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target=".plus">+</button><br>
+				<button style="flex-grow:0" class="plus_button btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target=".plus">+</button><br>
             </div>
             <?php if($result) : ?>
             <?php foreach($result as $row) : ?>
                 <div>
                     <input type="button" 
-                    class="title" 
+                    class="title"
+                    data-color="<?php echo $row->color_id ?>"
                     data-id="<?php echo $row->id ?>" 
                     value="<?php echo $row->title ?>" 
                     data-bs-toggle="modal" 
@@ -564,8 +596,10 @@ for($i=0; $i<$total_week; $i++){
 	<button type="button" id="del" class="btn btn-danger">削除</button>
 
 	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#calendar_search">検索</button>
-    <button type="button" id="color_my" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#color_edit">カラー設定</button>
+    <button type="button" id="color_my" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#color_edit">マイカラー設定</button>
 </form>
+
+
 
 <!-- + button modal -->
 <div class="modal plus" tabindex="-1">
@@ -595,7 +629,7 @@ for($i=0; $i<$total_week; $i++){
                             <th>マイカラー</th>
                             <td>
                                 <select class="form-select" id="my_color_list">
-                                    <option selected>マイカラー</option>
+                                    <option value="" selected>マイカラー</option>
                                     <?php foreach($color_result as $row) : ?>
                                         <option value="<?php echo $row->color_id ?>">
                                             <?php echo $row->color_name ?>
@@ -632,6 +666,14 @@ for($i=0; $i<$total_week; $i++){
             <div class="text_input_group">
                 <label for="text_search" class="control-label">検索したい予定を入力して下さい。</label>
                 <input type="text" class="form-control" id="text_search">
+                <select class="form-select" id="my_color_search_list">
+                    <option value="" selected>マイカラー</option>
+                    <?php foreach($color_result as $row) : ?>
+                        <option value="<?php echo $row->color_id ?>">
+                            <?php echo $row->color_name ?>
+                        </option>
+                    <?php endforeach ?>
+                </select>
                 <button class="btn btn-secondary" id="text_search_input"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 入力</button>
             </div>
             <div class="output_group">
@@ -639,8 +681,9 @@ for($i=0; $i<$total_week; $i++){
                 <thead>
                     <tr>
                         <th>日付</th>
+                        <th>マイカラー</th>
                         <th>内容</th>
-                        <th></th>
+                        <th>リンク</th>
                     </tr>
                 </thead> 
                 <tbody id="search_result">
@@ -663,7 +706,7 @@ for($i=0; $i<$total_week; $i++){
 
     <div class="modal-content">
       	<div class="modal-header">
-        	<h1 class="modal-title fs-5" id="exampleModalLabel">カラー設定</h1>
+        	<h1 class="modal-title fs-5" id="exampleModalLabel">マイカラー設定</h1>
         	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       	</div>
 
@@ -701,7 +744,7 @@ for($i=0; $i<$total_week; $i++){
                         <th>マイカラー</th>
                         <td>
                             <select class="form-select" id="my_color_edit_list">
-                                <option selected>マイカラー</option>
+                                <option value="" selected>新規作成</option>
                                 <?php foreach($color_result as $row) : ?>
                                     <option value="<?php echo $row->color_id ?>">
                                         <?php echo $row->color_name ?>
